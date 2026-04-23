@@ -1,0 +1,32 @@
+# TD3 configuration
+env: MountainCarContinuous-v0
+
+# Training
+total_timesteps: 300000
+learning_starts: 1000
+batch_size: 256
+gradient_steps: 1
+train_freq: 1
+
+# Algorithm
+gamma: 0.99
+tau: 0.005
+learning_rate: 0.0003
+buffer_size: 100000
+
+# Policy delay & noise
+policy_delay: 2
+target_noise: 0.2
+target_noise_clip: 0.5
+exploration_noise: 0.1
+
+# Network
+hidden_sizes: [256, 256]
+
+# Logging
+log_interval: 1000
+eval_interval: 5000
+n_eval_episodes: 10
+
+# Reproducibility
+seed: 42

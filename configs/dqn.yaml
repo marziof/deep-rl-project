@@ -1,0 +1,31 @@
+# DQN configuration
+env: CartPole-v1
+
+# Training
+total_timesteps: 200000
+learning_starts: 1000
+train_freq: 4
+target_update_freq: 1000
+batch_size: 64
+gradient_steps: 1
+
+# Algorithm
+gamma: 0.99
+learning_rate: 0.001
+buffer_size: 50000
+
+# Exploration
+epsilon_start: 1.0
+epsilon_end: 0.05
+epsilon_decay: 0.995
+
+# Network
+hidden_sizes: [128, 128]
+
+# Logging
+log_interval: 1000
+eval_interval: 5000
+n_eval_episodes: 10
+
+# Reproducibility
+seed: 42
