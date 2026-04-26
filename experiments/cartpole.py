@@ -1,6 +1,7 @@
 # Implement experiment on cartpole environment
 
 from src.utils.seed import set_seed
+from src.utils.env import make_env
 import gymnasium as gym
 
 # -----------------------
@@ -28,6 +29,14 @@ def run_episode(env, agent):
         next_state, reward, terminated, truncated, _ = env.step(action)
         # Check if the episode has ended
         done = terminated or truncated
+        # For DQN-style agent
+        if hasattr(agent, "store"):
+            agent.store(state, action, reward, next_state, done)
+        if hasattr(agent, "update"):
+            agent.update()
+        if done and hasattr(agent, "decay_epsilon"):
+            agent.decay_epsilon()
+        #
         # Update the current state and accumulate the reward
         state = next_state
         total_reward += reward
@@ -37,30 +46,13 @@ def run_episode(env, agent):
 # -----------------------
 # Main experiment loop
 # -----------------------
-def run_experiment(agent, n_episodes=100, seed=0):
-    """
-    Experiment loop to run multiple episodes with a random agent and collect rewards.
-    Args:
-    - agent: An instance of an agent that can choose actions based on states
-    - n_episodes: The number of episodes to run for the experiment
-    - seed: The random seed for reproducibility
-    Returns:
-    - rewards: A list of total rewards obtained from each episode
-    """
-    set_seed(seed)
-
-    env = gym.make("CartPole-v1")
-    env.reset(seed=seed)  # Set environment seed for reproducibility
-    env.action_space.seed(seed)
-
+def run_experiment(env, agent, n_episodes=100):
     rewards = []
 
     for ep in range(n_episodes):
         r = run_episode(env, agent)
         rewards.append(r)
-        print(ep, r)
 
-    env.close()
     return rewards
 
 
@@ -71,8 +63,15 @@ def run_experiments(agent_fn, seeds, n_episodes=100):
     all_rewards = []
 
     for seed in seeds:
-        agent = agent_fn()
-        rewards = run_experiment(agent, n_episodes=n_episodes, seed=seed)
+        env = make_env("CartPole-v1", seed=seed)
+
+        state_dim = env.observation_space.shape[0]
+        action_space = env.action_space
+
+        agent = agent_fn(action_space, state_dim)
+
+        rewards = run_experiment(env, agent, n_episodes)
+
         all_rewards.append(rewards)
 
     return all_rewards
