@@ -1,7 +1,7 @@
 # Implementation of DQN algo
 
 import random
-from turtle import done
+from turtle import done, mode
 import numpy as np
 import torch
 import torch.nn as nn
@@ -48,15 +48,20 @@ class DQNAgent:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.q_net.to(self.device)
         self.target_net.to(self.device)
+        self.eval_mode = False
 
-
+    
     def act(self, state):
         """Epsilon-greedy action selection, returns an action index based on the current state"""
-        if random.random() < self.eps:
-            return self.action_space.sample()
         state_tensor = torch.tensor(state, dtype=torch.float32).unsqueeze(0).to(self.device)
         with torch.no_grad():
             q_values = self.q_net(state_tensor)
+        # evaluation: fully deterministic, no exploration
+        if self.eval_mode:
+            return q_values.argmax().item()
+        # training: epsilon-greedy
+        if random.random() < self.eps:
+            return self.action_space.sample()
         return q_values.argmax().item()
     
     def store(self, state, action, reward, next_state, done):
@@ -95,3 +100,6 @@ class DQNAgent:
 
     def decay_epsilon(self):
         self.eps = max(self.eps_min, self.eps * self.eps_decay)
+
+    def set_eval_mode(self, mode: bool):
+        self.eval_mode = mode
