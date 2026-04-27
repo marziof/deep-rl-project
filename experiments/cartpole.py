@@ -23,6 +23,7 @@ def run_episode(env: gym.Env, agent, logger: Logger):
     state, _ = env.reset()
     done = False
     total_reward = 0
+    episode_losses = []
 
     # 2. Loop until the episode is over (terminated or truncated)
     while not done:
@@ -36,7 +37,10 @@ def run_episode(env: gym.Env, agent, logger: Logger):
         if hasattr(agent, "store"):
             agent.store(state, action, reward, next_state, done)
         if hasattr(agent, "update"):
-            agent.update()
+            loss = agent.update()
+            if loss is not None:
+                episode_losses.append(loss)
+            
         # if done and hasattr(agent, "decay_epsilon"):
         #     agent.decay_epsilon()
         if hasattr(agent, "decay_epsilon"):
@@ -51,6 +55,11 @@ def run_episode(env: gym.Env, agent, logger: Logger):
     if hasattr(agent, "decay_epsilon"):
         #agent.decay_epsilon()
         logger.log_epsilon(agent.eps)
+
+    if len(episode_losses) > 0:
+        logger.log_loss(np.mean(episode_losses))
+    else:
+        logger.log_loss(0.0)
 
     return total_reward
 

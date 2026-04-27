@@ -72,8 +72,8 @@ class DQNAgent:
         # 1. Check if we have enough samples in the buffer to sample a batch
         if len(self.buffer) < self.batch_size:
             return
-        if len(self.buffer) < 1000: # to avoid training on very small buffer, can be tuned
-            return
+        # if len(self.buffer) < 1000: # to avoid training on very small buffer, can be tuned
+        #     return
         # 2. Sample an action
         states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
         states_tensor = torch.tensor(states, dtype=torch.float32).to(self.device)
@@ -94,9 +94,12 @@ class DQNAgent:
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.q_net.parameters(), 10)
         self.optimizer.step()
+        loss_value = loss.item()
         # 6. update target network every N-steps
         if self.update_step % self.target_update_freq == 0:
             self.target_net.load_state_dict(self.q_net.state_dict())
+
+        return loss_value
 
     def decay_epsilon(self):
         self.eps = max(self.eps_min, self.eps * self.eps_decay)
