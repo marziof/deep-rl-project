@@ -34,7 +34,9 @@ def run_episode(env, agent):
             agent.store(state, action, reward, next_state, done)
         if hasattr(agent, "update"):
             agent.update()
-        if done and hasattr(agent, "decay_epsilon"):
+        # if done and hasattr(agent, "decay_epsilon"):
+        #     agent.decay_epsilon()
+        if hasattr(agent, "decay_epsilon"):
             agent.decay_epsilon()
         #
         # Update the current state and accumulate the reward
@@ -52,6 +54,8 @@ def run_experiment(env, agent, n_episodes=100):
     for ep in range(n_episodes):
         r = run_episode(env, agent)
         rewards.append(r)
+        # if hasattr(agent, "decay_epsilon"):
+        #     agent.decay_epsilon()
 
     return rewards
 
@@ -70,7 +74,23 @@ def run_experiments(agent_fn, seeds, n_episodes=100):
 
         agent = agent_fn(action_space, state_dim)
 
-        rewards = run_experiment(env, agent, n_episodes)
+        if hasattr(agent, "q_net"):
+            import torch
+            agent.q_net.train()
+            params_before = list(agent.q_net.parameters())[0].clone()
+
+            # force a few updates
+            for _ in range(10):
+                agent.update()
+
+            params_after = list(agent.q_net.parameters())[0]
+            print("Weights changed:", not torch.equal(params_before, params_after))
+            print("Buffer size:", len(agent.buffer))
+            print("Epsilon:", agent.eps)
+        try:
+            rewards = run_experiment(env, agent, n_episodes)
+        finally:
+            env.close()
 
         all_rewards.append(rewards)
 
