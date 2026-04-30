@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from src.networks.mlp import MLP
+from src.networks.actor_net import Actor
 from src.buffers.replay_buffer import ReplayBuffer
 
 # article: https://arxiv.org/pdf/1802.09477
@@ -33,26 +34,27 @@ from src.buffers.replay_buffer import ReplayBuffer
 
 class TD3Agent:
 
-    def __init__(self, action_space, state_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr, sigma, sigma_tilde, c, tau):
+    def __init__(self, action_space, state_dim, gamma, batch_size, policy_delay, buffer_capacity, lr, sigma, sigma_tilde, c, tau):
         #super().__init__()
         self.action_space = action_space
         self.state_dim = state_dim
         self.gamma = gamma
         self.batch_size = batch_size
+        self.policy_delay = policy_delay # d
         self.sigma = sigma
         self.sigma_tilde = sigma_tilde
         self.c = c
         self.tau = tau
-        self.target_update_freq = target_update_freq # d
         self.update_step = 0 # time t
         self.buffer = ReplayBuffer(buffer_capacity)
         action_dim = action_space.shape[0]
+        max_action = action_space.high[0]
         self.crit_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1) # input_dim = dim of state space, output_dim = dim of action space
         self.crit_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1)
-        self.actor_net = MLP(input_dim=state_dim, output_dim=action_dim)
+        self.actor_net = Actor(state_dim, action_dim, max_action)
         self.target_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1)
         self.target_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1)
-        self.target_actor_net = MLP(input_dim=state_dim, output_dim=action_dim)
+        self.target_actor_net = Actor(state_dim, action_dim, max_action)
         self.target_net1.load_state_dict(self.crit_net1.state_dict()) # initialize target net with same weights as q_net
         self.target_net2.load_state_dict(self.crit_net2.state_dict()) # initialize target net with same weights as q_net
         self.target_actor_net.load_state_dict(self.actor_net.state_dict()) # initialize target actor net with same weights as actor net
@@ -123,7 +125,7 @@ class TD3Agent:
         self.critics_optimizer.step()
         loss_value = loss.item()
         # 6. update target networks every N-steps
-        if self.update_step % self.target_update_freq == 0:
+        if self.update_step % self.policy_delay == 0:
             actor_actions = self.actor_net(states_tensor)
             actor_loss = -self.crit_net1(torch.cat([states_tensor, actor_actions], dim=1)).mean()
             # optimize actor
