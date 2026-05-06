@@ -1,7 +1,7 @@
 # File to log training data
 
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class Logger:
     def __init__(self):
