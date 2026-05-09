@@ -8,7 +8,7 @@ To run your experiment, use the following command:
 python experiment_runner.py --config configs/conf.yaml
 ```
 Structure of the training pipeling:
-```experiment_runner.py```runs the main logic, it reads your config file and run the experiment, plots the results and save them. The ```run_experiments```function is called from ```src/train.py```. This file contains ```run_experiment```and ```run_experiments```. These functions create the environment you specified in the config file and runs the required ```run_episode```function from the environment-specifc scripts. In the environment script, the ```run_episode```handles the loops differently depending on the algorithm you have chosen. 
+```experiment_runner.py```runs the main logic, it reads your config file and run the experiment, plots the results and save them. The ```run_experiments```function is called from ```src/train.py```. This file contains ```run_experiment```and ```run_experiments```. These functions create the environment you specified in the config file and calls the required ```run_episode```function from the environment-specifc scripts. In the environment script, the ```run_episode```handles the loops differently depending on the algorithm you chose. 
 
 The framework supports the following environments and algorithms (so far):
 - CartPole-v1 with DQN
