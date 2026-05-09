@@ -1,0 +1,37 @@
+# General settings of the simulation
+experiment:
+  env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1]
+  algo: "sac" # Choose from [dqn, ppo, sac, td3]
+  n_episodes: 300
+  eval_interval: 10
+  seeds: [0,1,2]
+  exp_name: "Pendulum_Test"
+
+# Algorithm-specific hyperparameters 
+algos:  
+  sac:
+    lr: 0.0003
+    tau: 0.005
+    alpha: 0.2
+    batch_size: 256
+    buffer_capacity: 1000000
+    gamma: 0.99
+    gradient_steps: 1
+    target_update_freq: 1000
+
+  td3: 
+    lr: 0.0003
+    policy_delay: 2
+    target_noise: 2
+
+  dqn: 
+    lr: 0.001
+    buffer_capacity: 256
+    epsilon_decay: 0.995
+  
+  ppo: 
+    lr: 0.0003
+    n_steps: 2048
+    clip_range: 0.2
+  
+

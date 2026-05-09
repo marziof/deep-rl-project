@@ -2,7 +2,7 @@
 #----------------------------------
 # Evaluation function to evaluate the performance of an agent on the environment (without exploration)
 #----------------------------------
-def evaluate(env, agent, n_episodes=10):
+def evaluate(env, agent, n_episodes=10, seed=0):
     """
     Evaluates the agent's performance on the environment by running a few episodes without exploration and averaging the rewards.
     Args:

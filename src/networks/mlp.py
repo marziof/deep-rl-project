@@ -4,15 +4,15 @@ import torch
 import torch.nn as nn
 
 class MLP(nn.Module):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self, input_dim, output_dim, hidden_units=256 ):
         super().__init__()
 
         self.net = nn.Sequential(
-            nn.Linear(input_dim, 64),
+            nn.Linear(input_dim, hidden_units),
             nn.ReLU(),
-            nn.Linear(64, 64),
+            nn.Linear(hidden_units, hidden_units),
             nn.ReLU(),
-            nn.Linear(64, output_dim)
+            nn.Linear(hidden_units, output_dim)
         )
 
     def forward(self, x):

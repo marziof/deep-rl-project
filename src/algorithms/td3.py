@@ -33,7 +33,7 @@ from src.buffers.replay_buffer import ReplayBuffer
 
 class TD3Agent:
 
-    def __init__(self, action_space, state_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr, sigma, sigma_tilde, c, tau):
+    def __init__(self, action_space, state_dim, gamma, batch_size, eps, eps_min, eps_decay, policy_delay, target_update_freq, buffer_capacity, lr, sigma, sigma_tilde, c, tau):
         #super().__init__()
         self.action_space = action_space
         self.state_dim = state_dim
@@ -41,6 +41,7 @@ class TD3Agent:
         self.batch_size = batch_size
         self.sigma = sigma
         self.sigma_tilde = sigma_tilde
+        self.policy_delay = policy_delay
         self.c = c
         self.tau = tau
         self.target_update_freq = target_update_freq # d

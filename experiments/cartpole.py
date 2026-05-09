@@ -66,47 +66,47 @@ def run_episode(env: gym.Env, agent, logger: Logger):
 # -----------------------
 # Main experiment loop
 # -----------------------
-def run_experiment(env, agent, logger, n_episodes=100, eval_interval=10, seed=0):
-    #rewards = []
-    for ep in range(n_episodes):
-        r = run_episode(env, agent, logger)
-        #rewards.append(r)
-        # if hasattr(agent, "decay_epsilon"):
-        #     agent.decay_epsilon()
-        if ep % eval_interval == 0:
-            scores = []
-            for s in range(3):
-                eval_env = make_env("CartPole-v1", seed=seed + 1000 + s)
-                scores.append(evaluate(eval_env, agent, n_episodes=5))
-                eval_env.close()
-            logger.log_eval_reward(np.mean(scores))
-    return logger
+# def run_experiment(env, agent, logger, n_episodes=100, eval_interval=10, seed=0):
+#     #rewards = []
+#     for ep in range(n_episodes):
+#         r = run_episode(env, agent, logger)
+#         #rewards.append(r)
+#         # if hasattr(agent, "decay_epsilon"):
+#         #     agent.decay_epsilon()
+#         if ep % eval_interval == 0:
+#             scores = []
+#             for s in range(3):
+#                 eval_env = make_env("CartPole-v1", seed=seed + 1000 + s)
+#                 scores.append(evaluate(eval_env, agent, n_episodes=5))
+#                 eval_env.close()
+#             logger.log_eval_reward(np.mean(scores))
+#     return logger
 
 
 #--------------
 # Run experiments across seeds
 #--------------
-def run_experiments(agent_fn, seeds, n_episodes=100, eval_interval=10):
-    all_logs = []
+# def run_experiments(agent_fn, seeds, n_episodes=100, eval_interval=10):
+#     all_logs = []
 
-    for seed in seeds:
-        env = make_env("CartPole-v1", seed=seed)
+#     for seed in seeds:
+#         env = make_env("CartPole-v1", seed=seed)
 
-        state_dim = env.observation_space.shape[0]
-        action_space = env.action_space
+#         state_dim = env.observation_space.shape[0]
+#         action_space = env.action_space
 
-        agent = agent_fn(action_space, state_dim)
+#         agent = agent_fn(action_space, state_dim)
 
-        logger = Logger()
+#         logger = Logger()
 
-        try:
-            logger = run_experiment(env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
-        finally:
-            env.close()
+#         try:
+#             logger = run_experiment(env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
+#         finally:
+#             env.close()
 
-        all_logs.append(logger)
+#         all_logs.append(logger)
 
-    return all_logs
+#     return all_logs
 
 # def run_experiments(agent_fn, seeds, n_episodes=100):
 #     all_rewards = []
