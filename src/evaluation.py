@@ -16,7 +16,7 @@ def evaluate(env, agent, n_episodes=10, seed=0):
 
     rewards = []
     for _ in range(n_episodes):
-        state, _ = env.reset()
+        state, _ = env.reset(seed=seed)
         done = False
         total = 0
 

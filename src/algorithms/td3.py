@@ -55,6 +55,7 @@ class TD3Agent:
         self.target_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64)
         self.target_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64)
         self.target_actor_net = Actor(state_dim, action_dim, max_action)
+
         self.target_net1.load_state_dict(self.crit_net1.state_dict()) # initialize target net with same weights as q_net
         self.target_net2.load_state_dict(self.crit_net2.state_dict()) # initialize target net with same weights as q_net
         self.target_actor_net.load_state_dict(self.actor_net.state_dict()) # initialize target actor net with same weights as actor net
