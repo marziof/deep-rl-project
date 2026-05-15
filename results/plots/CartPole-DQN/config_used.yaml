@@ -1,11 +1,11 @@
 # General settings of the simulation
 experiment:
-  env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1]
-  algo: "td3" # Choose from [dqn, ppo, sac, td3]
-  n_episodes: 300
-  eval_interval: 10
+  env_name: "CartPole-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1]
+  algo: "dqn" # Choose from [dqn, ppo, sac, td3]
+  n_episodes: 500
+  eval_interval: 30
   seeds: [0,1,2]
-  exp_name: "Pendulum_TD3"
+  exp_name: "CartPole-DQN"
 
 # Algorithm-specific hyperparameters 
 algos:  

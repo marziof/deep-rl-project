@@ -13,11 +13,11 @@ algos:
     lr: 0.0003
     tau: 0.005
     alpha: 0.2
-    batch_size: 256
-    buffer_capacity: 1000000
+    batch_size: 64
+    buffer_capacity: 20000
     gamma: 0.99
     gradient_steps: 1
-    target_update_freq: 1000
+    target_update_freq: 500
 
   td3: 
     gamma: 0.99
@@ -31,9 +31,15 @@ algos:
     buffer_capacity: 20000
 
   dqn: 
+    gamma: 0.99
     lr: 0.001
-    buffer_capacity: 256
-    epsilon_decay: 0.995
+    buffer_capacity: 20000
+    eps: 1.0
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
+    batch_size: 64
+
   
   ppo: 
     lr: 0.0003

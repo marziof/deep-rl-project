@@ -41,7 +41,7 @@ class DQNAgent:
         self.target_update_freq = target_update_freq
         self.update_step = 0
         self.buffer = ReplayBuffer(buffer_capacity)
-        self.q_net = MLP(input_dim=state_dim, output_dim=action_space.shape[0]*2) # input_dim = dim of state space, output_dim = dim of action space
+        self.q_net = MLP(input_dim=state_dim, output_dim=action_space.n) # input_dim = dim of state space, output_dim = dim of action space
         self.target_net = MLP(input_dim=state_dim, output_dim=action_space.n)
         self.target_net.load_state_dict(self.q_net.state_dict()) # initialize target net with same weights as q_net
         self.optimizer = torch.optim.Adam(self.q_net.parameters(), lr=lr)
@@ -69,9 +69,14 @@ class DQNAgent:
     
     def update(self):
         self.update_step += 1
-        # 1. Check if we have enough samples in the buffer to sample a batch
-        if len(self.buffer) < self.batch_size:
+
+        warmup_steps = 1000 
+        if len(self.buffer) < warmup_steps:
             return
+
+        # 1. Check if we have enough samples in the buffer to sample a batch
+        # if len(self.buffer) < self.batch_size:
+        #     return
         # if len(self.buffer) < 1000: # to avoid training on very small buffer, can be tuned
         #     return
         # 2. Sample an action

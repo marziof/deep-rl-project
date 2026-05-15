@@ -22,12 +22,11 @@ def run_experiments(env_name, algo_name, agent_fn, seeds, n_episodes=100, eval_i
         agent = agent_fn(action_space, state_dim)
 
         logger = Logger()
-
         try:
             if env_name=="Pendulum-v1":
-                logger = run_experiment(env_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
+                logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
             elif env_name=="CartPole-v1":
-                logger = run_experiment(env_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
+                logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed)
         finally:
             env.close()
 
@@ -35,13 +34,13 @@ def run_experiments(env_name, algo_name, agent_fn, seeds, n_episodes=100, eval_i
 
     return all_logs
 
-def run_experiment(env_name,env, agent, logger, n_episodes=100, eval_interval=10, seed=0):
+def run_experiment(env_name, algo_name, env, agent, logger, n_episodes=100, eval_interval=10, seed=0):
     #rewards = []
     for ep in range(n_episodes):
         if env_name=="Pendulum-v1":
-            r = pendulum_run_episode(env, agent, logger)
-        elif env_name=="Cartpole-v1":
-            r = cartpole_run_episode(env, agent, logger)
+            r = pendulum_run_episode(env, agent, logger,algo_name=algo_name)
+        elif env_name=="CartPole-v1":
+            r = cartpole_run_episode(env,agent, logger,algo_name=algo_name)
         #rewards.append(r)
         # if hasattr(agent, "decay_epsilon"):
         #     agent.decay_epsilon()

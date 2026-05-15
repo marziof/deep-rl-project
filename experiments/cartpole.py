@@ -9,7 +9,7 @@ import numpy as np
 # -----------------------
 # Run one episode
 # -----------------------
-def run_episode(env: gym.Env, agent, logger: Logger):
+def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
     """
     Run a single episode using the given agent and environment, returning the total reward.
     Args:
@@ -43,8 +43,8 @@ def run_episode(env: gym.Env, agent, logger: Logger):
             
         # if done and hasattr(agent, "decay_epsilon"):
         #     agent.decay_epsilon()
-        if hasattr(agent, "decay_epsilon"):
-            agent.decay_epsilon()
+        # if hasattr(agent, "decay_epsilon"):
+        #     agent.decay_epsilon()
         #
         # Update the current state and accumulate the reward
         state = next_state
@@ -53,7 +53,7 @@ def run_episode(env: gym.Env, agent, logger: Logger):
     # log the total reward for this episode + decay epsilon if applicable
     logger.log_episode_reward(total_reward)
     if hasattr(agent, "decay_epsilon"):
-        #agent.decay_epsilon()
+        agent.decay_epsilon()
         logger.log_epsilon(agent.eps)
 
     if len(episode_losses) > 0:

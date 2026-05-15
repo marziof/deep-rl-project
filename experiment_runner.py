@@ -85,7 +85,6 @@ def main():
 
     algo_module = importlib.import_module(f"src.algorithms.{algo_name}")
     agent_class = getattr(algo_module, f"{algo_name.upper()}Agent")
-
     # Launch experiment 
     print(f"--- Launching {algo_name.upper()} on {env_type.upper()} ---")
     all_logs = run_experiments(
