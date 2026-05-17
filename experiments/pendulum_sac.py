@@ -68,8 +68,8 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
                     episode_losses.append(loss)
             
         # Update the current state and accumulate the reward
-        state = next_state
-        total_reward += reward
+            state = next_state
+            total_reward += reward
     
     # log the total reward for this episode 
     logger.log_episode_reward(total_reward)
