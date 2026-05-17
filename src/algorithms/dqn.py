@@ -29,10 +29,11 @@ from src.buffers.replay_buffer import ReplayBuffer
 
 class DQNAgent:
 
-    def __init__(self, action_space, state_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr):
+    def __init__(self, action_space, state_dim, hidden_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr):
         #super().__init__()
         self.action_space = action_space
         self.state_dim = state_dim
+        self.hidden_dim = hidden_dim
         self.gamma = gamma
         self.batch_size = batch_size
         self.eps = eps
@@ -41,8 +42,8 @@ class DQNAgent:
         self.target_update_freq = target_update_freq
         self.update_step = 0
         self.buffer = ReplayBuffer(buffer_capacity)
-        self.q_net = MLP(input_dim=state_dim, output_dim=action_space.n) # input_dim = dim of state space, output_dim = dim of action space
-        self.target_net = MLP(input_dim=state_dim, output_dim=action_space.n)
+        self.q_net = MLP(input_dim=state_dim, output_dim=action_space.n, hidden_dim = hidden_dim) # input_dim = dim of state space, output_dim = dim of action space
+        self.target_net = MLP(input_dim=state_dim, output_dim=action_space.n, hidden_dim = hidden_dim)
         self.target_net.load_state_dict(self.q_net.state_dict()) # initialize target net with same weights as q_net
         self.optimizer = torch.optim.Adam(self.q_net.parameters(), lr=lr)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

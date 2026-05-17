@@ -1,7 +1,4 @@
-# Implement experiment on cartpole environment
-
 import torch
-import time
 
 from src.utils.seed import set_seed
 from src.utils.env import make_env, make_env_render
@@ -80,11 +77,11 @@ def run_experiment(env, agent, logger, n_episodes=100, eval_interval=10, seed=0,
             scores = []
             for s in range(3):
                 if create_videos:
-                    eval_env = make_env_render("CartPole-v1", seed=seed + 1000 + s)
-                    scores.append(evaluate(eval_env, agent, n_episodes=5, visualize=True, video_title=f"cartpole_seed_{seed}_{s}_episode_{ep}"))
+                    eval_env = make_env_render("LunarLander-v3", seed=seed + 1000 + s)
+                    scores.append(evaluate(eval_env, agent, n_episodes=5, visualize=True, video_title=f"lunarlander_seed_{seed}_{s}_episode_{ep}"))
                     eval_env.close()
                 else:
-                    eval_env = make_env("CartPole-v1", seed=seed + 1000 + s)
+                    eval_env = make_env("LunarLander-v3", seed=seed + 1000 + s)
                     scores.append(evaluate(eval_env, agent, n_episodes=5, visualize=False))
                     eval_env.close()
             logger.log_eval_reward(np.mean(scores))
@@ -98,7 +95,7 @@ def run_experiments(agent_fn, seeds, n_episodes=100, eval_interval=10, create_vi
     all_logs = []
 
     for seed in seeds:
-        env = make_env("CartPole-v1", seed=seed)
+        env = make_env("LunarLander-v3", seed=seed)
 
         state_dim = env.observation_space.shape[0]
         action_space = env.action_space
@@ -116,58 +113,29 @@ def run_experiments(agent_fn, seeds, n_episodes=100, eval_interval=10, create_vi
 
     return all_logs
 
-# def run_experiments(agent_fn, seeds, n_episodes=100):
-#     all_rewards = []
-
-#     for seed in seeds:
-#         env = make_env("CartPole-v1", seed=seed)
-
-#         state_dim = env.observation_space.shape[0]
-#         action_space = env.action_space
-
-#         agent = agent_fn(action_space, state_dim)
-
-#         if hasattr(agent, "q_net"):
-#             import torch
-#             agent.q_net.train()
-#             params_before = list(agent.q_net.parameters())[0].clone()
-
-#             # force a few updates
-#             for _ in range(10):
-#                 agent.update()
-
-#             params_after = list(agent.q_net.parameters())[0]
-#             print("Weights changed:", not torch.equal(params_before, params_after))
-#             print("Buffer size:", len(agent.buffer))
-#             print("Epsilon:", agent.eps)
-#         try:
-#             rewards = run_experiment(env, agent, n_episodes)
-#         finally:
-#             env.close()
-
-#         all_rewards.append(rewards)
-
-#     return all_rewards
-
 def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for PPO, for the plots.
     '''Runs one iteration of the PPO algorithm, which consists of collecting trajectories from multiple actors, estimating advantages and value targets, and updating the actor and critic networks.'''  
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
     states, _ = env_vector.reset()
-    for t in range(agent.time_per_actor):
+    for _ in range(agent.time_per_actor):
+        states = states
         actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
         #  Compute TDs
-        agent.store(t, states, actions, rewards, next_states, log_probs, terms | truncs)
+        dones = terms | truncs
+        for i in range(agent.n_actors):
+            agent.store(states[i], actions[i], rewards[i], next_states[i], log_probs[i], dones[i])
         states = next_states
         total_avg_reward += np.mean(rewards)
+    
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
     loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
     logger.log_episode_reward(total_avg_reward)
     logger.log_loss(loss)
     return total_avg_reward
 
-def run_experiment_PPO(env_vector, env_name, agent, logger, n_iterations=100, eval_interval=10, seed=0, create_videos=False, video_interval=500):
+def run_experiment_lunarlander_PPO(env_vector, agent, logger, n_iterations=100, eval_interval=10, seed=0, create_videos=False, video_interval=500):
     #rewards = []
     for it in range(n_iterations):
         print(f"Seed: {seed}, iteration: {it}")
@@ -177,35 +145,35 @@ def run_experiment_PPO(env_vector, env_name, agent, logger, n_iterations=100, ev
         if it % eval_interval == 0:
             scores = []
             for s in range(3):
-                if create_videos and s == 0 and (it%video_interval == 0):
-                    eval_env = make_env_render(env_name, seed=seed + 1000 + s)
-                    scores.append(evaluate_PPO(eval_env, agent, n_episodes=5, visualize=True, video_title=f"{env_name}_ppo_seed_{seed}_{s}_episode_{it}"))
+                if create_videos and s == 0 and (it%video_interval == 0): 
+                    eval_env = make_env_render("LunarLander-v3", seed=seed + 1000 + s)
+                    scores.append(evaluate_PPO(eval_env, agent, n_episodes=5, visualize=True, video_title=f"lunarlander_ppo_seed_{seed}_episode_{it}"))
                     eval_env.close()
                 else:
-                    eval_env = make_env(env_name, seed=seed + 1000 + s)
+                    eval_env = make_env("LunarLander-v3", seed=seed + 1000 + s)
                     scores.append(evaluate_PPO(eval_env, agent, n_episodes=5, visualize=False))
                     eval_env.close()
             logger.log_eval_reward(np.mean(scores))
     return logger
 
-def run_experiments_PPO(env_name, agent_fn, seeds, n_episodes=100, eval_interval=10, create_videos=False, video_interval=500):
+def run_experiments_lunarlander_PPO(agent_fn, seeds, n_episodes=100, eval_interval=10, create_videos=False, video_interval=500):
     all_logs = []
 
     for seed in seeds:
 
         
-        env_test = gym.make(env_name) # we will create vectorized envs later, here we just need it to get the state and action space dimensions for the agent initialization
+        env_test = gym.make("LunarLander-v3") # we will create vectorized envs later, here we just need it to get the state and action space dimensions for the agent initialization
         state_dim = env_test.observation_space.shape[0]
         action_space = env_test.action_space
 
         agent = agent_fn(action_space, state_dim)
         envs  = gym.vector.SyncVectorEnv([
-            lambda: gym.make(env_name) for _ in range(agent.n_actors)
+            lambda: gym.make("LunarLander-v3") for _ in range(agent.n_actors)
         ])
         logger = Logger()
 
         try:
-            logger = run_experiment_PPO(envs, env_name, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos, video_interval=video_interval)
+            logger = run_experiment_lunarlander_PPO(envs, agent, logger, n_iterations=n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos, video_interval=video_interval)
         finally:
             envs.close()
             env_test.close()

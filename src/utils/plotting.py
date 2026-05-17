@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # For now basic - plots mean + std of rewards per episode across seeds 
 # Future: will need to handle more complex cases (multiple algorithms), maybe df instead of arrays, etc.
 # -----------------------
-def plot_learning_curve(episodes, mean_rewards, std_rewards):
+def plot_learning_curve(episodes, mean_rewards, std_rewards, save_figure=False, title = "Learning Curve", filename="learning_curve"):
     """
     Plot the learning curve with mean rewards and standard deviation.
     Args:
@@ -25,6 +25,12 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards):
 
     plt.xlabel("Episode")
     plt.ylabel("Reward")
-    plt.title("CartPole Learning Curve (3 seeds)")
+    plt.title(title)
     plt.legend()
-    plt.show()
+
+    if save_figure:
+        plt.savefig(f"media/plots/{filename}.png")
+    else:
+        plt.show()
+
+    
