@@ -6,10 +6,14 @@ from datetime import datetime
 # For now basic - plots mean + std of rewards per episode across seeds 
 # Future: will need to handle more complex cases (multiple algorithms), maybe df instead of arrays, etc.
 # -----------------------
+<<<<<<< HEAD
 import matplotlib.pyplot as plt
 import os
 
 def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Curve", save_path=None, exp_name=None):
+=======
+def plot_learning_curve(episodes, mean_rewards, std_rewards, save_figure=False, title = "Learning Curve", filename="learning_curve"):
+>>>>>>> origin/ppo-branch
     """
     Plot the learning curve with mean rewards and standard deviation and save to disk.
     Args:
@@ -36,6 +40,7 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
     plt.ylabel("Reward")
     plt.title(title)
     plt.legend()
+<<<<<<< HEAD
     plt.grid(True, linestyle='--', alpha=0.6)
 
     # 1. Define the save path
@@ -52,3 +57,12 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
     print(f"Plot saved to: {save_path}")
     plt.show()
     plt.close() # Close plot to free up memory
+=======
+
+    if save_figure:
+        plt.savefig(f"media/plots/{filename}.png")
+    else:
+        plt.show()
+
+    
+>>>>>>> origin/ppo-branch
