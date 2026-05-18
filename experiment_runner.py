@@ -88,7 +88,15 @@ def main():
     exp_module = importlib.import_module(exp_module_name)
 
     algo_module = importlib.import_module(f"src.algorithms.{algo_name}")
-    agent_class = getattr(algo_module, f"{algo_name.upper()}Agent")
+    # Handling special case of PPO algo that can accept continuous and discrete environments
+    temp_env = gym.make(env_type)
+    is_discrete = isinstance(temp_env.action_space, gym.spaces.Discrete)
+    temp_env.close()
+    if algo_name == "ppo" and not is_discrete:
+        agent_class = getattr(algo_module, "PPOAgentContinuous")
+    else:
+        agent_class = getattr(algo_module, f"{algo_name.upper()}Agent")
+        
     # Launch experiment 
     print(f"--- Launching {algo_name.upper()} on {env_type.upper()} ---")
     all_logs = run_experiments(
