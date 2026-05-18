@@ -18,6 +18,7 @@ from datetime import datetime
 # Mapping algorithm requirements to action space types
 ALGO_COMPATIBILITY = {
     "dqn": "discrete",
+    "ddqn": "discrete",
     "sac": "continuous",
     "td3": "continuous",
     "ppo": "both"
