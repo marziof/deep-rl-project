@@ -63,9 +63,9 @@ def run_experiment(env_name, algo_name, env, agent, logger, n_episodes=100, n_it
     if algo_name != "ppo":
         for ep in range(n_episodes):
             if env_name=="Pendulum-v1":
-                r = pendulum_run_episode(env, agent, logger,algo_name=algo_name)
+                r, n_steps = pendulum_run_episode(env, agent, logger,algo_name=algo_name)
             elif env_name=="CartPole-v1":
-                r = cartpole_run_episode(env,agent, logger,algo_name=algo_name)
+                r, n_steps = cartpole_run_episode(env,agent, logger,algo_name=algo_name)
             #rewards.append(r)
             # if hasattr(agent, "decay_epsilon"):
             #     agent.decay_epsilon()
@@ -102,6 +102,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
     states, _ = env_vector.reset()
+    steps_in_iteration = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
         actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
@@ -111,7 +112,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
         total_avg_reward += np.mean(rewards)
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
     loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
-    logger.log_episode_reward(total_avg_reward)
+    logger.log_episode_reward(total_avg_reward, n_steps)
     logger.log_loss(loss)
     return total_avg_reward
 

@@ -11,6 +11,9 @@ class Logger:
         self.losses = []
         self.epsilons = []
         self.step_rewards = []
+        self.global_step = 0
+        self.episode_steps = []
+        self.eval_steps = []
         self.algo_name = algo_name
         self.env_name = env_name
         self.seed = seed
@@ -21,12 +24,18 @@ class Logger:
         self.losses = []
         self.epsilons = []
         self.step_rewards = []
+        self.global_step = 0
+        self.episode_steps = []
+        self.eval_steps = []
 
-    def log_episode_reward(self, r):
+    def log_episode_reward(self, r, n_steps):
         self.episode_rewards.append(r)
+        self.global_step += n_steps
+        self.episode_steps.append(self.global_step)
 
     def log_eval_reward(self, r):
         self.eval_rewards.append(r)
+        self.eval_steps.append(self.global_step)
 
     def log_loss(self, loss):
         self.losses.append(loss)
@@ -44,13 +53,15 @@ class Logger:
         rows = []
 
         for i, r in enumerate(self.episode_rewards):
-            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "episode_reward", "value": r})
+            step = self.episode_steps[i] if i < len(self.episode_steps) else 0
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": step, "metric": "episode_reward", "value": r})
 
         for i, r in enumerate(self.step_rewards): 
-            rows.append({ "algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "step_reward", "value": r})
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "step_reward", "value": r})
 
-        for i, r in enumerate(self.eval_rewards): 
-            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "eval_reward", "value": r})
+        for i, r in enumerate(self.eval_rewards):
+            step = self.eval_steps[i] if i < len(self.eval_steps) else 0
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": step, "metric": "eval_reward", "value": r})
 
         for i, l in enumerate(self.losses): 
             rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "loss", "value": l})
