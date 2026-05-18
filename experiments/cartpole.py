@@ -22,21 +22,17 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
     Returns:
     - total_reward: The cumulative reward obtained during the episode
     """
-    # 1. Reset the environment to start a new episode
     state, _ = env.reset()
     done = False
     total_reward = 0
     episode_losses = []
+    steps_in_episode = 0
 
-    # 2. Loop until the episode is over (terminated or truncated)
     while not done:
-        # Agent chooses an action based on the current state
         action = agent.act(state)
-        # Execute the action and observe the next state and reward
         next_state, reward, terminated, truncated, _ = env.step(action)
-        # Check if the episode has ended
         done = terminated or truncated
-        # For DQN-style agent
+        steps_in_episode += 1
         if hasattr(agent, "store"):
             agent.store(state, action, reward, next_state, done)
         if hasattr(agent, "update"):
@@ -44,17 +40,10 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
             if loss is not None:
                 episode_losses.append(loss)
             
-        # if done and hasattr(agent, "decay_epsilon"):
-        #     agent.decay_epsilon()
-        # if hasattr(agent, "decay_epsilon"):
-        #     agent.decay_epsilon()
-        #
-        # Update the current state and accumulate the reward
         state = next_state
         total_reward += reward
     
-    # log the total reward for this episode + decay epsilon if applicable
-    logger.log_episode_reward(total_reward)
+    logger.log_episode_reward(total_reward, steps_in_episode)
     if hasattr(agent, "decay_epsilon"):
         agent.decay_epsilon()
         logger.log_epsilon(agent.eps)
@@ -64,7 +53,7 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
     else:
         logger.log_loss(0.0)
 
-    return total_reward
+    return total_reward, steps_in_episode
 
 # -----------------------
 # Main experiment loop
@@ -170,6 +159,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
     states, _ = env_vector.reset()
+    steps_in_iteration = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
         actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
@@ -180,6 +170,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
     loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
     logger.log_episode_reward(total_avg_reward)
+    logger.log_steps_in_episode(steps_in_iteration)
     logger.log_loss(loss)
     return total_avg_reward
 
