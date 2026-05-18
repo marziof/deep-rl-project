@@ -25,9 +25,11 @@ def run_experiments(env_name, algo_name, agent_fn, seeds, n_episodes=100, n_iter
 
             logger = Logger(algo_name = algo_name, seed=seed, env_name=env_name)
             try:
-                if env_name=="Pendulum-v1":
+                if env_name=="Pendulum-v1" or env_name=="InvertedDoublePendulum-v5":
                     logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, save_dir=save_dir)
                 elif env_name=="CartPole-v1":
+                    logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, save_dir=save_dir)
+                elif env_name=="LunarLander-v3":
                     logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, save_dir=save_dir)
             finally:
                 env.close()
@@ -62,9 +64,11 @@ def run_experiment(env_name, algo_name, env, agent, logger, n_episodes=100, n_it
     #rewards = []
     if algo_name != "ppo":
         for ep in range(n_episodes):
-            if env_name=="Pendulum-v1":
+            if env_name=="Pendulum-v1" or env_name=="InvertedDoublePendulum-v5":
                 r, n_steps = pendulum_run_episode(env, agent, logger,algo_name=algo_name)
             elif env_name=="CartPole-v1":
+                r, n_steps = cartpole_run_episode(env,agent, logger,algo_name=algo_name)
+            elif env_name=="LunarLander-v3":
                 r, n_steps = cartpole_run_episode(env,agent, logger,algo_name=algo_name)
             #rewards.append(r)
             # if hasattr(agent, "decay_epsilon"):
@@ -102,7 +106,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
     states, _ = env_vector.reset()
-    steps_in_iteration = agent.time_per_actor * len(env_vector.envs)
+    n_steps = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
         actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)

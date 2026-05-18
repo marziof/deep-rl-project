@@ -86,7 +86,7 @@ def main():
 
     # Import of the experiements
     exp_module_name = f"experiments.{get_environment_filename(env_type)}"
-    exp_module = importlib.import_module(exp_module_name)
+    #exp_module = importlib.import_module(exp_module_name)
 
     algo_module = importlib.import_module(f"src.algorithms.{algo_name}")
     # Handling special case of PPO algo that can accept continuous and discrete environments
