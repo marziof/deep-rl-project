@@ -3,6 +3,7 @@ import sys
 import os
 import importlib
 import numpy as np
+import pandas as pd
 import gymnasium as gym
 import argparse
 import shutil
@@ -119,6 +120,17 @@ def main():
     mean_eval, std_eval = compute_stats(eval_rewards)
     plot_learning_curve(np.arange(len(mean_eval)) * config['experiment']['eval_interval'], 
     mean_eval, std_eval, title=f"{env_type.capitalize()} Evaluation ({algo_name.upper()})", exp_name=exp_name)
+
+    # save logger to df
+    SAVE_DIR = os.path.join("results", "data", exp_name)
+    SAVE_PATH = f"{SAVE_DIR}/{algo_name}_{env_type}_logs.csv"
+    os.makedirs(SAVE_DIR, exist_ok=True)
+    df_list = []
+    for logger in all_logs:
+        df = logger.to_dataframe()
+        df_list.append(df)
+    df = pd.concat(df_list, ignore_index=True)
+    df.to_csv(SAVE_PATH, index=False)
 
 if __name__ == "__main__":
     main()

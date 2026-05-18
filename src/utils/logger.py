@@ -1,6 +1,7 @@
 # File to log training data
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 class Logger:
@@ -9,12 +10,14 @@ class Logger:
         self.eval_rewards = []
         self.losses = []
         self.epsilons = []
+        self.step_rewards = []
 
     def reset(self):
         self.episode_rewards = []
         self.eval_rewards = []
         self.losses = []
         self.epsilons = []
+        self.step_rewards = []
 
     def log_episode_reward(self, r):
         self.episode_rewards.append(r)
@@ -30,3 +33,26 @@ class Logger:
 
     def moving_average(self, window=100):
         return np.convolve(self.episode_rewards, np.ones(window)/window, mode='valid')
+    
+    def log_step_rewards(self, rewards):
+        self.step_rewards.append(rewards)
+
+    def to_dataframe(self):
+        rows = []
+
+        for i, r in enumerate(self.episode_rewards):
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "episode_reward", "value": r})
+
+        for i, r in enumerate(self.step_rewards): 
+            rows.append({ "algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "step_reward", "value": r})
+
+        for i, r in enumerate(self.eval_rewards): 
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "eval_reward", "value": r})
+
+        for i, l in enumerate(self.losses): 
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "loss", "value": l})
+
+        for i, e in enumerate(self.epsilons):
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "epsilon", "value": e})
+
+        return pd.DataFrame(rows)
