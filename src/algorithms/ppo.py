@@ -21,7 +21,13 @@ class PPOAgent:
         self.gamma = gamma
         self.lr = lr
         self.lambda_param = 0.95
-        self.actor_net = MLP(input_dim=state_dim, output_dim=action_space.n, hidden_units=hidden_units)
+        if hasattr(action_space, 'n'):
+            self.action_dim = action_space.n
+            self.is_discrete = True
+        else:
+            self.action_dim = action_space.shape[0]
+            self.is_discrete = False
+        self.actor_net = MLP(input_dim=state_dim, output_dim=self.action_dim, hidden_units=hidden_units)
         self.critic_net = MLP(input_dim=state_dim, output_dim=1, hidden_units=hidden_units)
         self.optimizer = optim.Adam(list(self.actor_net.parameters()) + list(self.critic_net.parameters()), lr=self.lr)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -136,10 +142,10 @@ class PPOAgent:
         return np.mean(total_loss_values)
 
 class PPOAgentContinuous:
-    def __init__(self, action_space, state_dim, hidden_dim, gamma, lr, n_actors, time_per_actor, n_epochs, batch_size, epsilon_clip = 0.2):
+    def __init__(self, action_space, state_dim, hidden_units, gamma, lr, n_actors, time_per_actor, n_epochs, batch_size, epsilon_clip = 0.2):
         self.action_space = action_space
         self.state_dim = state_dim
-        self.hidden_dim = hidden_dim
+        self.hidden_units = hidden_units
         self.n_actors = n_actors
         self.time_per_actor = time_per_actor
         self.n_epochs = n_epochs
@@ -151,8 +157,8 @@ class PPOAgentContinuous:
         self.entropy_coef = 0.01
         
         self.action_dim = action_space.shape[0]
-        self.actor_net = MLP(input_dim=state_dim, output_dim=self.action_dim, hidden_dim=hidden_dim)
-        self.critic_net = MLP(input_dim=state_dim, output_dim=1, hidden_dim=hidden_dim)
+        self.actor_net = MLP(input_dim=state_dim, output_dim=self.action_dim, hidden_units=hidden_units)
+        self.critic_net = MLP(input_dim=state_dim, output_dim=1, hidden_units=hidden_units)
         self.log_std = nn.Parameter(torch.zeros(self.action_dim))
         self.optimizer = optim.Adam(list(self.actor_net.parameters()) + list(self.critic_net.parameters()) + [self.log_std], lr=self.lr)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

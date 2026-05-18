@@ -4,7 +4,7 @@ import imageio
 # Evaluation function to evaluate the performance of an agent on the environment (without exploration)
 #----------------------------------
 
-def evaluate(env, agent, n_episodes=10, visualize=False, video_title = None):
+def evaluate(env, agent, n_episodes=10, visualize=False, video_title = None, seed=0):
     """
     Evaluates the agent's performance on the environment by running a few episodes without exploration and averaging the rewards.
     Args:
