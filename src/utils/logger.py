@@ -11,8 +11,9 @@ class Logger:
         self.losses = []
         self.epsilons = []
         self.step_rewards = []
-        self.total_steps = 0
-        self.steps_per_episode = []
+        self.global_step = 0
+        self.episode_steps = []
+        self.eval_steps = []
         self.algo_name = algo_name
         self.env_name = env_name
         self.seed = seed
@@ -23,18 +24,18 @@ class Logger:
         self.losses = []
         self.epsilons = []
         self.step_rewards = []
-        self.total_steps = 0
-        self.steps_per_episode = []
+        self.global_step = 0
+        self.episode_steps = []
+        self.eval_steps = []
 
-    def log_episode_reward(self, r):
+    def log_episode_reward(self, r, n_steps):
         self.episode_rewards.append(r)
-
-    def log_steps_in_episode(self, steps):
-        self.steps_per_episode.append(steps)
-        self.total_steps += steps
+        self.global_step += n_steps
+        self.episode_steps.append(self.global_step)
 
     def log_eval_reward(self, r):
         self.eval_rewards.append(r)
+        self.eval_steps.append(self.global_step)
 
     def log_loss(self, loss):
         self.losses.append(loss)
@@ -50,23 +51,17 @@ class Logger:
 
     def to_dataframe(self):
         rows = []
-        
-        cumulative_steps = 0
+
         for i, r in enumerate(self.episode_rewards):
-            if i < len(self.steps_per_episode):
-                cumulative_steps += self.steps_per_episode[i]
-            else:
-                cumulative_steps += 0
-            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": cumulative_steps, "metric": "episode_reward", "value": r})
+            step = self.episode_steps[i] if i < len(self.episode_steps) else 0
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": step, "metric": "episode_reward", "value": r})
 
         for i, r in enumerate(self.step_rewards): 
-            rows.append({ "algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "step_reward", "value": r})
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "step_reward", "value": r})
 
-        eval_cumulative_steps = 0
         for i, r in enumerate(self.eval_rewards):
-            if i < len(self.steps_per_episode):
-                eval_cumulative_steps += self.steps_per_episode[i * len(self.steps_per_episode) // max(1, len(self.eval_rewards))]
-            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": eval_cumulative_steps, "metric": "eval_reward", "value": r})
+            step = self.eval_steps[i] if i < len(self.eval_steps) else 0
+            rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": step, "metric": "eval_reward", "value": r})
 
         for i, l in enumerate(self.losses): 
             rows.append({"algo": self.algo_name, "env": self.env_name, "seed": self.seed, "step": i, "metric": "loss", "value": l})

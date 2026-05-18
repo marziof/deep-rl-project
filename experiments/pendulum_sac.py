@@ -11,26 +11,26 @@ import numpy as np
 # -----------------------
 def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
     """
-    Run a single episode using the given agent and environment, returning the total reward.
+    Run a single episode using the given agent and environment, returning the total reward and steps.
     Args:
     - env: The environment to interact with (e.g., CartPole-v1)
     - agent: An instance of an agent that can choose actions based on states
     - logger: An instance of a Logger to log episode rewards and other metrics
     Returns:
-    - total_reward: The cumulative reward obtained during the episode
+    - total_reward, n_steps: The cumulative reward and step count for the episode
     """
     state, _ = env.reset()
     done = False
     total_reward = 0
     episode_losses = []
-    steps_in_episode = 0
+    n_steps = 0
 
     if algo_name=="sac":
         while not done:
             action = agent.act(state)
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
-            steps_in_episode += 1
+            n_steps += 1
             if hasattr(agent, "store"):
                 agent.store(state, action, reward, next_state, done)
             if hasattr(agent, "update"):
@@ -49,7 +49,7 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
             action = agent.act(state)
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
-            steps_in_episode += 1
+            n_steps += 1
             if hasattr(agent, "store"):
                 agent.store(state, action, reward, next_state, done)
             if hasattr(agent, "update"):
@@ -60,15 +60,14 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
             state = next_state
             total_reward += reward
     
-    logger.log_episode_reward(total_reward)
-    logger.log_steps_in_episode(steps_in_episode)
+    logger.log_episode_reward(total_reward, n_steps)
 
     if len(episode_losses) > 0:
         logger.log_loss(np.mean(episode_losses))
     else:
         logger.log_loss(0.0)
 
-    return total_reward
+    return total_reward, n_steps
 
 # # -----------------------
 # # Main experiment loop

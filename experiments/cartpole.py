@@ -43,8 +43,7 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
         state = next_state
         total_reward += reward
     
-    logger.log_episode_reward(total_reward)
-    logger.log_steps_in_episode(steps_in_episode)
+    logger.log_episode_reward(total_reward, steps_in_episode)
     if hasattr(agent, "decay_epsilon"):
         agent.decay_epsilon()
         logger.log_epsilon(agent.eps)
@@ -54,7 +53,7 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="dqn"):
     else:
         logger.log_loss(0.0)
 
-    return total_reward
+    return total_reward, steps_in_episode
 
 # -----------------------
 # Main experiment loop
