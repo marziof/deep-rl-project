@@ -58,7 +58,7 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
 
 
 
-def plot_env_curves(df, env_name, save_path=None):
+def plot_env_curves(df, env_name, metric="episode_reward", save_path=None):
     """
     Plot learning curves for multiple algorithms and environments from a DataFrame.
     Args:
@@ -68,8 +68,10 @@ def plot_env_curves(df, env_name, save_path=None):
     - save_path (str): Optional path to save the plot. If None, saves to default location.
     """
     plt.figure(figsize=(12, 8))
+
+    df = df[df[metric]==metric and df['env'] == env_name] 
     
-    sns.lineplot(data=df[df['env'] == env_name], x='step', y='value', hue='algo', ci='sd')
+    sns.lineplot(data=df, x='step', y='value', hue='algo', ci='sd')
     plt.title(f"Learning Curves for {env_name}")
     plt.xlabel("Episode", fontsize=FONT_SIZE)
     plt.ylabel("Reward", fontsize=FONT_SIZE)

@@ -5,12 +5,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class Logger:
-    def __init__(self):
+    def __init__(self, algo_name, env_name, seed=0):
         self.episode_rewards = []
         self.eval_rewards = []
         self.losses = []
         self.epsilons = []
         self.step_rewards = []
+        self.algo_name = algo_name
+        self.env_name = env_name
+        self.seed = seed
 
     def reset(self):
         self.episode_rewards = []

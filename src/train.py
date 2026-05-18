@@ -23,7 +23,7 @@ def run_experiments(env_name, algo_name, agent_fn, seeds, n_episodes=100, n_iter
 
             agent = agent_fn(action_space, state_dim)
 
-            logger = Logger()
+            logger = Logger(algo_name = algo_name, seed=seed, env_name=env_name)
             try:
                 if env_name=="Pendulum-v1":
                     logger = run_experiment(env_name,algo_name,env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, save_dir=save_dir)
@@ -45,7 +45,7 @@ def run_experiments(env_name, algo_name, agent_fn, seeds, n_episodes=100, n_iter
             envs  = gym.vector.SyncVectorEnv([
                 lambda: gym.make(env_name) for _ in range(agent.n_actors)
             ])
-            logger = Logger()
+            logger = Logger(algo_name = algo_name, seed=seed, env_name=env_name)
 
             try:
                 #logger = run_experiment_PPO(envs, env_name, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos, video_interval=video_interval, save_dir=save_dir)

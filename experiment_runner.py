@@ -140,6 +140,7 @@ def main():
         df_list.append(df)
     df = pd.concat(df_list, ignore_index=True)
     df.to_csv(SAVE_PATH, index=False)
+    print(f"Logs saved to {SAVE_PATH} ")
 
 if __name__ == "__main__":
     main()
