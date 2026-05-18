@@ -71,8 +71,11 @@ def main():
     algo_name = config['experiment']['algo']
     seeds = config['experiment']['seeds']
     n_episodes = config['experiment']['n_episodes']
+    n_iterations = config['experiment']['n_iterations']
     eval_interval = config['experiment']['eval_interval']
     exp_name = config['experiment']['exp_name']
+    create_videos = config['experiment']['create_videos']
+    video_interval = config['experiment']['video_interval']
 
     compatible, message = check_compatibility(env_type, algo_name)
     if not compatible:
@@ -98,7 +101,11 @@ def main():
         ),
         seeds=seeds,
         n_episodes=n_episodes,
+        n_iterations=n_iterations,
         eval_interval=eval_interval,
+        create_videos=create_videos,
+        video_interval=video_interval,
+        save_dir=save_dir,
     )
 
     # Plotting

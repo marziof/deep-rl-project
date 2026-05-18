@@ -123,10 +123,10 @@ def run_experiments(agent_fn, seeds, n_episodes=100, eval_interval=10, create_vi
 
 #         logger = Logger()
 
-        try:
-            logger = run_experiment(env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos)
-        finally:
-            env.close()
+        # try:
+        #     logger = run_experiment(env, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos)
+        # finally:
+        #     env.close()
 
 #         all_logs.append(logger)
 

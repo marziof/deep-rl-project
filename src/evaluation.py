@@ -47,7 +47,7 @@ def evaluate(env, agent, n_episodes=10, visualize=False, video_title = None):
     agent.set_eval_mode(False)
     return sum(rewards) / len(rewards)
 
-def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None):
+def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None, save_dir=None):
     """
     Evaluates the agent's performance on the environment by running a few episodes without exploration and averaging the rewards.
     Args:
@@ -82,8 +82,8 @@ def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None)
 
     if visualize:
         if video_title is not None:
-            imageio.mimsave(f"media/{video_title}.mp4", frames, fps=30)
+            imageio.mimsave(f"{save_dir}/{video_title}.mp4", frames, fps=30)
         else:
-            imageio.mimsave("media/all_episodes.mp4", frames, fps=30)
+            imageio.mimsave("{save_dir}/all_episodes.mp4", frames, fps=30)
 
     return sum(rewards) / len(rewards)
