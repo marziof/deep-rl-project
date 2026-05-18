@@ -11,6 +11,10 @@ from src.networks.mlp import MLP
 from src.buffers.replay_buffer import ReplayBuffer
 
 
+
+
+
+
 #  algo - from https://zhuanlan.zhihu.com/p/468385820
 
 # Q-learning with replay buffer and target network:
@@ -27,9 +31,9 @@ from src.buffers.replay_buffer import ReplayBuffer
 # 5. update phi', copy phi every N steps
 
 
-class DQNAgent:
+class DDQNAgent:
 
-    def __init__(self, action_space, state_dim, hidden_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr):
+    def __init__(self, action_space, state_dim,hidden_dim, gamma, batch_size, eps, eps_min, eps_decay, target_update_freq, buffer_capacity, lr):
         #super().__init__()
         self.action_space = action_space
         self.state_dim = state_dim
@@ -70,14 +74,9 @@ class DQNAgent:
     
     def update(self):
         self.update_step += 1
-
-        warmup_steps = 1000 
-        if len(self.buffer) < warmup_steps:
-            return
-
         # 1. Check if we have enough samples in the buffer to sample a batch
-        # if len(self.buffer) < self.batch_size:
-        #     return
+        if len(self.buffer) < self.batch_size:
+            return
         # if len(self.buffer) < 1000: # to avoid training on very small buffer, can be tuned
         #     return
         # 2. Sample an action
@@ -89,9 +88,10 @@ class DQNAgent:
         dones_tensor = torch.tensor(dones, dtype=torch.float32).unsqueeze(1).to(self.device)
         # 3. Compute target Q-values using the target network
         with torch.no_grad():
-            # yj = rj + gamma * max_a' Q_phi'(s', a')
-            max_next_q = self.target_net(next_states_tensor).max(1, keepdim=True)[0]
-            target = rewards_tensor + self.gamma * (1 - dones_tensor) * max_next_q
+            max_next_q_net = self.q_net(next_states_tensor).max(1, keepdim=True)[1]
+            next_q_target = self.target_net(next_states_tensor).gather(1, max_next_q_net)
+            target = rewards_tensor + self.gamma * (1 - dones_tensor) * next_q_target
+
         # 4. Compute the loss (MSE)
         q_values = self.q_net(states_tensor).gather(1, actions_tensor)
         loss = torch.nn.functional.mse_loss(q_values, target)
@@ -112,3 +112,4 @@ class DQNAgent:
 
     def set_eval_mode(self, mode: bool):
         self.eval_mode = mode
+        
