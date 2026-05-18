@@ -73,7 +73,7 @@ def plot_env_curves(df, env_name, metric="episode_reward", save_path=None):
     
     sns.lineplot(data=df, x='step', y='value', hue='algo', ci='sd')
     plt.title(f"Learning Curves for {env_name}")
-    plt.xlabel("Episode", fontsize=FONT_SIZE)
+    plt.xlabel("Steps", fontsize=FONT_SIZE)
     plt.ylabel("Reward", fontsize=FONT_SIZE)
     plt.legend(title="Algorithm", fontsize=FONT_SIZE-2)
     plt.grid(True, linestyle='--', alpha=0.6)

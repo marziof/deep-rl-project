@@ -102,6 +102,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
     states, _ = env_vector.reset()
+    steps_in_iteration = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
         actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
@@ -112,6 +113,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
     loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
     logger.log_episode_reward(total_avg_reward)
+    logger.log_steps_in_episode(steps_in_iteration)
     logger.log_loss(loss)
     return total_avg_reward
 

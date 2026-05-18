@@ -19,47 +19,37 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
     Returns:
     - total_reward: The cumulative reward obtained during the episode
     """
-    # 1. Reset the environment to start a new episode
     state, _ = env.reset()
     done = False
     total_reward = 0
     episode_losses = []
+    steps_in_episode = 0
 
-    # 2. Loop until the episode is over (terminated or truncated)
     if algo_name=="sac":
         while not done:
-            # Agent chooses an action based on the current state
             action = agent.act(state)
-            # Execute the action and observe the next state and reward
             next_state, reward, terminated, truncated, _ = env.step(action)
-            # Check if the episode has ended
             done = terminated or truncated
-            # For DQN-style agent
+            steps_in_episode += 1
             if hasattr(agent, "store"):
                 agent.store(state, action, reward, next_state, done)
             if hasattr(agent, "update"):
-                # If your agent doesn't have gradient_steps defined, default to 1
                 n_updates = getattr(agent, "gradient_steps", 1) 
                 
                 for _ in range(n_updates):
                     loss = agent.update()
-                    # SAC returns a dictionary of losses, so we check if it's not None
                     if loss is not None: 
                         episode_losses.append(loss["q_loss"])
                 
-            # Update the current state and accumulate the reward
             state = next_state
             total_reward += reward
     
     elif algo_name=="td3":
         while not done:
-            # Agent chooses an action based on the current state
             action = agent.act(state)
-            # Execute the action and observe the next state and reward
             next_state, reward, terminated, truncated, _ = env.step(action)
-            # Check if the episode has ended
             done = terminated or truncated
-            # For DQN-style agent
+            steps_in_episode += 1
             if hasattr(agent, "store"):
                 agent.store(state, action, reward, next_state, done)
             if hasattr(agent, "update"):
@@ -67,12 +57,11 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
                 if loss is not None:
                     episode_losses.append(loss)
             
-        # Update the current state and accumulate the reward
             state = next_state
             total_reward += reward
     
-    # log the total reward for this episode 
     logger.log_episode_reward(total_reward)
+    logger.log_steps_in_episode(steps_in_episode)
 
     if len(episode_losses) > 0:
         logger.log_loss(np.mean(episode_losses))
