@@ -49,11 +49,11 @@ class TD3Agent:
         self.buffer = ReplayBuffer(buffer_capacity)
         action_dim = action_space.shape[0]
         max_action = action_space.high[0]
-        self.crit_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64) # input_dim = dim of state space, output_dim = dim of action space
-        self.crit_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64)
+        self.crit_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=256) # input_dim = dim of state space, output_dim = dim of action space
+        self.crit_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=256)
         self.actor_net = Actor(state_dim, action_dim, max_action)
-        self.target_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64)
-        self.target_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=64)
+        self.target_net1 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=256)
+        self.target_net2 = MLP(input_dim=state_dim + action_dim, output_dim=1, hidden_units=256)
         self.target_actor_net = Actor(state_dim, action_dim, max_action)
 
         self.target_net1.load_state_dict(self.crit_net1.state_dict()) # initialize target net with same weights as q_net

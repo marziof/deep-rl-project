@@ -9,7 +9,7 @@ import seaborn as sns
 # -----------------------
 import os
 
-FONT_SIZE = 18
+FONT_SIZE = 20
 
 def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Curve", save_path=None, exp_name=None):
     """
@@ -76,10 +76,12 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
     df_binned = df.groupby(['algo', 'seed', 'step_bin'])['value'].mean().reset_index()
     
     sns.lineplot(data=df_binned, x='step_bin', y='value', hue='algo', errorbar='sd')
-    plt.title(f"Learning Curves for {env_name}")
+    plt.title(f"{env_name}", fontsize=FONT_SIZE)
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
-    plt.ylabel("Reward", fontsize=FONT_SIZE)
-    plt.legend(title="Algorithm", fontsize=FONT_SIZE-2)
+    plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
+    plt.legend(title="Algorithm", fontsize=FONT_SIZE, title_fontsize=FONT_SIZE-1)
+    plt.xticks(fontsize=FONT_SIZE-6)
+    plt.yticks(fontsize=FONT_SIZE-6)
     plt.grid(True, linestyle='--', alpha=0.6)
 
     if save_path is not None:

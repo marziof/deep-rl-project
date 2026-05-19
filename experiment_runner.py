@@ -46,6 +46,7 @@ def check_compatibility(env_name, algo_name):
     return True, ""
 
 def main():
+    set_seed(42)
     # Load configuratin
     parser = argparse.ArgumentParser(description="Run RL Experiments")
     parser.add_argument(
