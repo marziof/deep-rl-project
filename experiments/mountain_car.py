@@ -40,6 +40,9 @@ def run_episode(env: gym.Env, agent, logger: Logger):
             loss = agent.update()
             if loss is not None:
                 episode_losses.append(loss)
+        if hasattr(agent, "decay_epsilon"):
+            agent.decay_epsilon()
+            logger.log_epsilon(agent.eps)
             
         # Update the current state and accumulate the reward
         state = next_state
