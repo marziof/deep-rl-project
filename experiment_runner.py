@@ -46,6 +46,7 @@ def check_compatibility(env_name, algo_name):
     return True, ""
 
 def main():
+    set_seed(42)
     # Load configuratin
     parser = argparse.ArgumentParser(description="Run RL Experiments")
     parser.add_argument(
@@ -86,7 +87,6 @@ def main():
 
     # Import of the experiements
     exp_module_name = f"experiments.{get_environment_filename(env_type)}"
-    exp_module = importlib.import_module(exp_module_name)
 
     algo_module = importlib.import_module(f"src.algorithms.{algo_name}")
     # Handling special case of PPO algo that can accept continuous and discrete environments
