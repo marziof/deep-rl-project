@@ -76,8 +76,9 @@ def run_experiment(env_name, algo_name, env, agent, logger, n_episodes=100, n_it
             if ep % eval_interval == 0:
                 scores = []
                 for s in range(3):
-                    eval_env = make_env(env_name, seed=seed + 1000 + s)
-                    scores.append(evaluate(eval_env, agent, n_episodes=5))
+                    eval_seed = seed + 1000 + s
+                    eval_env = make_env(env_name, seed=eval_seed)
+                    scores.append(evaluate(eval_env, agent, n_episodes=3, seed=eval_seed))
                     eval_env.close()
                 logger.log_eval_reward(np.mean(scores))
         return logger
