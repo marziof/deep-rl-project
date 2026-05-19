@@ -58,7 +58,7 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
 
 
 
-def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size=1000):
+def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size=100):
     """
     Plot learning curves for multiple algorithms and environments from a DataFrame with step binning.
     Args:
@@ -70,12 +70,19 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
     plt.figure(figsize=(12, 8))
 
     df = df[(df['metric'] == metric) & (df['env'] == env_name)].copy()
-    
     # Bin steps for fair comparison across seeds
     df['step_bin'] = (df['step'] // bin_size) * bin_size
     df_binned = df.groupby(['algo', 'seed', 'step_bin'])['value'].mean().reset_index()
+    df['eval_idx'] = df.groupby(['algo', 'seed']).cumcount()
     
-    sns.lineplot(data=df_binned, x='step_bin', y='value', hue='algo', errorbar='sd')
+    # replace eval_idx with average step at that eval
+    df['aligned_step'] = (
+        df.groupby(['algo', 'eval_idx'])['step']
+        .transform('mean')
+    )
+    print(df_binned.groupby(['algo', 'step_bin']).size())
+    print("Seeds: ", df_binned['seed'].unique())
+    sns.lineplot(data=df, x='aligned_step', y='value', hue='algo', errorbar='sd')
     plt.title(f"{env_name}", fontsize=FONT_SIZE)
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
     plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
