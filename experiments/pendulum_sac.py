@@ -6,6 +6,7 @@ from src.utils.logger import Logger
 from src.evaluation import evaluate
 import gymnasium as gym
 import numpy as np
+import time
 # -----------------------
 # Run one episode
 # -----------------------
@@ -24,6 +25,8 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
     total_reward = 0
     episode_losses = []
     n_steps = 0
+    update_every = getattr(agent, "update_every", 4)
+    learning_starts = getattr(agent, "learning_starts", 1000)
 
     if algo_name=="sac":
         while not done:
@@ -31,14 +34,22 @@ def run_episode(env: gym.Env, agent, logger: Logger, algo_name="sac"):
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             n_steps += 1
+            agent.total_steps += 1
             if hasattr(agent, "store"):
                 agent.store(state, action, reward, next_state, done)
-            if hasattr(agent, "update"):
-                n_updates = getattr(agent, "gradient_steps", 1) 
+            # if hasattr(agent, "update"):
+            #     n_updates = getattr(agent, "gradient_steps", 1) 
                 
-                for _ in range(n_updates):
+            #     for _ in range(n_updates):
+            #         loss = agent.update()
+            #         if loss is not None: 
+            #             episode_losses.append(loss["q_loss"])
+            if (agent.total_steps > learning_starts and 
+                agent.total_steps % update_every == 0 and
+                hasattr(agent, "update")):
+                for _ in range(getattr(agent, "gradient_steps", 1)):
                     loss = agent.update()
-                    if loss is not None: 
+                    if loss is not None:
                         episode_losses.append(loss["q_loss"])
                 
             state = next_state

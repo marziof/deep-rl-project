@@ -74,6 +74,7 @@ def run_experiment(env_name, algo_name, env, agent, logger, n_episodes=100, n_it
             # if hasattr(agent, "decay_epsilon"):
             #     agent.decay_epsilon()
             if ep % eval_interval == 0:
+                print(f"Seed: {seed}, episode: {ep}")
                 scores = []
                 for s in range(3):
                     eval_seed = seed + 1000 + s

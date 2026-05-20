@@ -94,7 +94,7 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
     if save_path is not None:
         plt.savefig(save_path)
         print(f"Plot saved to: {save_path}")
-    plt.show()
+    #plt.show()
     plt.close()
 
 

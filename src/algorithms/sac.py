@@ -11,7 +11,7 @@ from src.networks.mlp import MLP
 from src.buffers.replay_buffer import ReplayBuffer
 
 class SACAgent:
-    def __init__(self, action_space, state_dim, gamma, batch_size, buffer_capacity, target_update_freq, tau=0.005, lr=3e-4, gradient_steps=1, alpha=0.2):
+    def __init__(self, action_space, state_dim, gamma, batch_size, buffer_capacity, target_update_freq, tau=0.005, lr=3e-4, gradient_steps=1, alpha=0.2, learning_starts=1000, update_every=4):
         # Algorithm parameters
         self.action_space = action_space
         self.state_dim = state_dim
@@ -23,6 +23,9 @@ class SACAgent:
         #self.lambda_pi = lambda_pi
         self.lr = lr
         self.gamma = gamma
+        self.total_steps = 0
+        self.learning_starts = learning_starts # Start learning after we have at least 10% of the buffer filled
+        self.update_every = update_every
         self.update_step = 0
         self.target_update_freq = target_update_freq
         if hasattr(action_space, 'n'):
@@ -31,13 +34,20 @@ class SACAgent:
         else:
             self.action_dim = action_space.shape[0]
             self.is_discrete = False
+
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
         
         # Defining 5 nets : 4 for architecture and 1 for target
-        self.actor_net = MLP(input_dim=state_dim, output_dim=self.action_dim * 2)
-        self.q1_net = MLP(input_dim=state_dim + self.action_dim, output_dim=1)
-        self.q2_net = MLP(input_dim=state_dim + self.action_dim, output_dim=1)
-        self.v_net = MLP(input_dim=state_dim, output_dim=1)
-        self.v_target_net = MLP(input_dim=state_dim, output_dim=1)
+        self.actor_net = MLP(input_dim=state_dim, output_dim=self.action_dim * 2).to(self.device)
+        self.q1_net = MLP(input_dim=state_dim + self.action_dim, output_dim=1).to(self.device)
+        self.q2_net = MLP(input_dim=state_dim + self.action_dim, output_dim=1).to(self.device)
+        self.v_net = MLP(input_dim=state_dim, output_dim=1).to(self.device)
+        self.v_target_net = MLP(input_dim=state_dim, output_dim=1).to(self.device)
 
         self.v_target_net.load_state_dict(self.v_net.state_dict())
 
@@ -48,7 +58,8 @@ class SACAgent:
         self.actor_optimizer = optim.Adam(self.actor_net.parameters(), lr=3e-4)
 
         # Others
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
         self.eval_mode = False
         self.buffer = ReplayBuffer(buffer_capacity)
 
