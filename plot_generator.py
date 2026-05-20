@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from src.utils.plotting import plot_learning_curve, plot_env_curves
+from src.utils.plotting import plot_learning_curve, plot_env_curves, plot_param_comparison
 import argparse
 
 #We parse the environment name to get the corresponding logs for each algorithm, then we plot the learning curves for all algorithms on the same plot for comparison. We will do this for both environments.
@@ -12,7 +12,7 @@ parser.add_argument(
     help="Name of the environment to plot (e.g., 'Pendulum-v1' or 'CartPole-v1')"
 )
 args = parser.parse_args()
-if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5"]:
+if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Sweep"]:
     raise ValueError("Unsupported environment. Please choose 'Pendulum-v1', 'CartPole-v1', 'LunarLander-v3', or 'InvertedDoublePendulum-v5'.")
 env_name = args.env
 LOAD_DIR = os.path.join("results", "data")
@@ -35,6 +35,19 @@ if env_name=="Pendulum-v1":
     results_df3 = pd.read_csv(FILE_PATH3)
 
     results_df = pd.concat([results_df1, results_df2, results_df3], ignore_index=True)
+
+elif env_name == "Sweep":
+    SAVE_NAME = "Alpha_comparison.png"
+    
+    alphas = [0.05, 0.1, 0.2, 0.5]
+    dfs = []
+    for alpha in alphas:
+        path = os.path.join(LOAD_DIR, f"Pendulum_SAC_alpha_{alpha}/sac_Pendulum-v1_logs.csv")
+        df = pd.read_csv(path)
+        df["alpha"] = str(alpha)  # tag with alpha value
+        dfs.append(df)
+    
+    results_df = pd.concat(dfs, ignore_index=True)
 
 
 elif env_name=="CartPole-v1":
@@ -101,4 +114,13 @@ if not os.path.exists(SAVE_DIR):
 # SAVE_NAME = "CartPole_DQN_learning_curve.png"
 
 
-plot_env_curves(results_df, env_name=env_name, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
+if env_name == "Sweep":
+    plot_param_comparison(
+        results_df,
+        metric="eval_reward",
+        param="alpha",
+        save_path=os.path.join(SAVE_DIR, SAVE_NAME),
+    )
+else:
+    plot_env_curves(results_df, env_name=env_name, metric="eval_reward", 
+                    save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
