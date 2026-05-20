@@ -1,12 +1,12 @@
 # General settings of the simulation
 experiment:
-  env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
+  env_name: "InvertedDoublePendulum-v5" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "td3" # Choose from [dqn, ppo, sac, td3, ddqn]
-  n_episodes: 300
-  n_iterations: 195 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  n_episodes: 1500
+  n_iterations: 82 # 781 with 128 for 1000 episodes #235 with 128 for 300  
   eval_interval: 5
   seeds: [0,42,100]
-  exp_name: "Pendulum_TD3_sigma_0.05"
+  exp_name: "InvertedDoublePendulum_TD3_2500" 
   create_videos: False
   video_interval: 10
 
@@ -26,7 +26,7 @@ algos:
 
   td3: 
     gamma: 0.99
-    batch_size: 256
+    batch_size: 64
     lr: 0.0003
     sigma: 0.05
     sigma_tilde: 0.2
@@ -51,10 +51,10 @@ algos:
     lr: 0.001
     epsilon_clip: 0.2
     gamma: 0.99
-    n_actors: 2
+    n_actors: 3
     n_epochs: 5
     batch_size: 64
-    hidden_units: 64
+    hidden_units: 256
     time_per_actor: 1024
 
   ddqn:

@@ -12,7 +12,7 @@ parser.add_argument(
     help="Name of the environment to plot (e.g., 'Pendulum-v1' or 'CartPole-v1')"
 )
 args = parser.parse_args()
-if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Sweep"]:
+if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Sweep", "Sigma"]:
     raise ValueError("Unsupported environment. Please choose 'Pendulum-v1', 'CartPole-v1', 'LunarLander-v3', or 'InvertedDoublePendulum-v5'.")
 env_name = args.env
 LOAD_DIR = os.path.join("results", "data")
@@ -45,6 +45,19 @@ elif env_name == "Sweep":
         path = os.path.join(LOAD_DIR, f"Pendulum_SAC_alpha_{alpha}/sac_Pendulum-v1_logs.csv")
         df = pd.read_csv(path)
         df["alpha"] = str(alpha)  # tag with alpha value
+        dfs.append(df)
+    
+    results_df = pd.concat(dfs, ignore_index=True)
+
+elif env_name == "Sigma":
+    SAVE_NAME = "Sigma_comparison.png"
+    
+    sigmas = [0.05, 0.1, 0.2, 0.3]
+    dfs = []
+    for sigma in sigmas:
+        path = os.path.join(LOAD_DIR, f"Pendulum_TD3_sigma_{sigma}/td3_Pendulum-v1_logs.csv")
+        df = pd.read_csv(path)
+        df["sigma"] = str(sigma)  # tag with sigma value
         dfs.append(df)
     
     results_df = pd.concat(dfs, ignore_index=True)
@@ -84,7 +97,7 @@ elif env_name=="LunarLander-v3":
 
 elif env_name=="InvertedDoublePendulum-v5":
     SAVE_NAME = "InvertedDoublePendulum_comparison.png"
-    FILE_NAME = "InvertedDoublePendulum_SAC/sac_InvertedDoublePendulum-v5_logs.csv"
+    FILE_NAME = "InvertedDoublePendulum_SAC_2500/sac_InvertedDoublePendulum-v5_logs.csv"
     FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
     results_df1 = pd.read_csv(FILE_PATH)
 
@@ -92,7 +105,7 @@ elif env_name=="InvertedDoublePendulum-v5":
     FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
     results_df2 = pd.read_csv(FILE_PATH2)
 
-    FILE_NAME3 = "InvertedDoublePendulum_TD3/td3_InvertedDoublePendulum-v5_logs.csv"
+    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs.csv"
     FILE_PATH3 = os.path.join(LOAD_DIR, FILE_NAME3)
     results_df3 = pd.read_csv(FILE_PATH3)
 
@@ -119,6 +132,13 @@ if env_name == "Sweep":
         results_df,
         metric="eval_reward",
         param="alpha",
+        save_path=os.path.join(SAVE_DIR, SAVE_NAME),
+    )
+elif env_name == "Sigma":
+    plot_param_comparison(
+        results_df,
+        metric="eval_reward",
+        param="sigma",
         save_path=os.path.join(SAVE_DIR, SAVE_NAME),
     )
 else:
