@@ -185,8 +185,9 @@ class PPOAgentContinuous:
 
             low  = self.action_space.low
             high = self.action_space.high
-            actions_np = np.clip(chosen_actions.cpu().numpy(), low, high)
-        return actions_np, log_probs
+            unclipped_actions = chosen_actions.cpu().numpy()
+            actions_np = np.clip(unclipped_actions, low, high)
+        return actions_np, unclipped_actions, log_probs
 
     def store(self, t, states, actions, rewards, next_states, log_probs, dones):
         self.states[:, t]       = states

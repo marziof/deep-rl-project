@@ -1,12 +1,12 @@
 # General settings of the simulation
 experiment:
   env_name: "InvertedDoublePendulum-v5" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
-  algo: "sac" # Choose from [dqn, ppo, sac, td3, ddqn]
+  algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
   n_episodes: 700
-  n_iterations: 148 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-  eval_interval: 25
-  seeds: [0,42,100,69]
-  exp_name: "InvertedDoublePendulum_SAC_700"
+  n_iterations: 50 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  eval_interval: 1
+  seeds: [0, 42, 67]
+  exp_name: "InvertedDoublePendulum_PPO_204ksteps_2048T2N"
   create_videos: False
   video_interval: 10
 
@@ -55,7 +55,7 @@ algos:
     n_epochs: 5
     batch_size: 64
     hidden_units: 64
-    time_per_actor: 1024
+    time_per_actor: 2048
 
   ddqn:
     gamma: 0.99
