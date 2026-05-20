@@ -71,7 +71,7 @@ class DQNAgent:
     def update(self):
         self.update_step += 1
 
-        warmup_steps = 1000 
+        warmup_steps = 64
         if len(self.buffer) < warmup_steps:
             return
 
@@ -104,6 +104,10 @@ class DQNAgent:
         # 6. update target network every N-steps
         if self.update_step % self.target_update_freq == 0:
             self.target_net.load_state_dict(self.q_net.state_dict())
+
+        # tau = 0.005
+        # for param, target_param in zip(self.q_net.parameters(), self.target_net.parameters()):
+        #     target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
 
         return loss_value
 
