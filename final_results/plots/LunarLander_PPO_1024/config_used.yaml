@@ -1,12 +1,12 @@
 # General settings of the simulation
 experiment:
-  env_name: "InvertedDoublePendulum-v5" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
+  env_name: "LunarLander-v3" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
-  n_episodes: 700
-  n_iterations: 50 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-  eval_interval: 1
-  seeds: [0, 42, 67]
-  exp_name: "InvertedDoublePendulum_PPO_204ksteps_2048T2N"
+  n_episodes: 1000
+  n_iterations: 195 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  eval_interval: 5
+  seeds: [0,42,100]
+  exp_name: "LunarLander_PPO_1024"
   create_videos: False
   video_interval: 10
 
@@ -15,14 +15,14 @@ algos:
   sac:
     lr: 0.0003
     tau: 0.005
-    alpha: 0.2
+    alpha: 0.5
     batch_size: 256
     buffer_capacity: 200000
     gamma: 0.99
     gradient_steps: 1
     target_update_freq: 500
-    learning_starts: 1000
-    update_every: 6
+    learning_starts: 500
+    update_every: 2
 
   td3: 
     gamma: 0.99
@@ -33,16 +33,16 @@ algos:
     c: 0.5
     tau: 0.005
     policy_delay: 2
-    buffer_capacity: 60000
+    buffer_capacity: 20000
 
   dqn: 
     gamma: 0.99
-    lr: 0.3e-3
-    buffer_capacity: 30000
+    lr: 0.001
+    buffer_capacity: 20000
     eps: 1.0
-    eps_min: 0.01
-    eps_decay: 0.9996
-    target_update_freq: 300
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
     batch_size: 64
     hidden_units: 64
 
@@ -55,18 +55,18 @@ algos:
     n_epochs: 5
     batch_size: 64
     hidden_units: 64
-    time_per_actor: 2048
+    time_per_actor: 1024
 
   ddqn:
     gamma: 0.99
-    lr: 0.3e-3
-    buffer_capacity: 30000
+    lr: 0.001
+    buffer_capacity: 20000
     eps: 1.0
     eps_min: 0.05
-    eps_decay: 0.9999
-    target_update_freq: 300
+    eps_decay: 0.999
+    target_update_freq: 500
     batch_size: 64
-    hidden_units: 64
+    hidden_units: 256
 
   
 

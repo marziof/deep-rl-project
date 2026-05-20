@@ -133,7 +133,7 @@ def main():
 
     # save logger to df
     SAVE_DIR = os.path.join("results", "data", exp_name)
-    SAVE_PATH = f"{SAVE_DIR}/{algo_name}_{env_type}_logs.csv"
+    SAVE_PATH = f"{SAVE_DIR}/{algo_name}_{env_type}_logs_nep{n_episodes}_eps09999.csv"
     os.makedirs(SAVE_DIR, exist_ok=True)
     df_list = []
     for logger in all_logs:
