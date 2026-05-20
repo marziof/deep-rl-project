@@ -2,11 +2,11 @@
 experiment:
   env_name: "InvertedDoublePendulum-v5" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "sac" # Choose from [dqn, ppo, sac, td3, ddqn]
-  n_episodes: 700
+  n_episodes: 2500
   n_iterations: 148 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-  eval_interval: 25
-  seeds: [0,42,100,69]
-  exp_name: "InvertedDoublePendulum_SAC_700"
+  eval_interval: 10
+  seeds: [0,42,100]
+  exp_name: "InvertedDoublePendulum_SAC_2500"
   create_videos: False
   video_interval: 10
 
@@ -21,8 +21,8 @@ algos:
     gamma: 0.99
     gradient_steps: 1
     target_update_freq: 500
-    learning_starts: 500
-    update_every: 2
+    learning_starts: 1000
+    update_every: 6
 
   td3: 
     gamma: 0.99
