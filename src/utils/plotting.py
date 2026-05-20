@@ -99,4 +99,86 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
 
 
 
-    
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+def plot_param_comparison(
+    df,
+    metric="eval_reward",
+    param="algo",
+    save_path=None,
+):
+    """
+    Plot mean ± std learning curves across seeds.
+
+    Assumes:
+    - one metric value logged per episode/evaluation
+    - all seeds have same number of logged episodes
+    - step counts may differ across seeds
+
+    Args:
+        df (pd.DataFrame):
+            Must contain columns:
+            ['seed', 'metric', 'value', param]
+
+        metric (str):
+            Metric to plot (e.g. "eval_reward")
+
+        param (str):
+            Column used for comparison/hue
+            (e.g. "algo", "learning_rate")
+
+        save_path (str or None):
+            Optional path to save figure
+    """
+
+    plt.figure(figsize=(12, 8))
+
+    # filter metric
+    df_plot = df[df["metric"] == metric].copy()
+
+    # create aligned episode/eval index
+    df_plot["episode"] = (
+        df_plot
+        .groupby([param, "seed"])
+        .cumcount()
+    )
+    eval_interval = 10
+    df_plot["episode"] = df_plot["episode"] * eval_interval
+
+
+    palette = sns.color_palette(
+        "flare",
+        n_colors=df_plot[param].nunique()
+    )
+
+    sns.lineplot(
+        data=df_plot,
+        x="episode",
+        y="value",
+        hue=param,
+        errorbar="sd",
+        palette=palette,
+    )
+
+    plt.title(f"{param} comparison", fontsize=18)
+    plt.xlabel("Episode", fontsize=16)
+    plt.ylabel(metric.replace("_", " ").title(), fontsize=16)
+
+    plt.legend(
+        title=param,
+        fontsize=12,
+        title_fontsize=13,
+    )
+
+    plt.grid(True, linestyle="--", alpha=0.6)
+
+    plt.tight_layout()
+
+    if save_path is not None:
+        plt.savefig(save_path, bbox_inches="tight")
+        print(f"Plot saved to: {save_path}")
+
+    plt.show()
+    plt.close()
