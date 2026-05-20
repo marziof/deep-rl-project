@@ -73,7 +73,7 @@ def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None,
                 frame = env.render()
                 frames.append(frame)
 
-            action, _ = agent.act(state)
+            action, unclipped_actions, _ = agent.act(state)
             state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             total += reward
@@ -84,6 +84,6 @@ def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None,
         if video_title is not None:
             imageio.mimsave(f"{save_dir}/{video_title}.mp4", frames, fps=30)
         else:
-            imageio.mimsave("{save_dir}/all_episodes.mp4", frames, fps=30)
+            imageio.mimsave(f"{save_dir}/all_episodes.mp4", frames, fps=30)
 
     return sum(rewards) / len(rewards)

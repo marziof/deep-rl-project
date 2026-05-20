@@ -110,7 +110,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     states, _ = env_vector.reset()
     n_steps = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
-        actions, log_probs = agent.act(states) # returns actions for all actors
+        actions, unclipped_actions, log_probs = agent.act(states) # returns actions for all actors
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
         #  Compute TDs
         agent.store(t, states, actions, rewards, next_states, log_probs, terms | truncs)

@@ -55,7 +55,7 @@ algos:
     n_epochs: 5
     batch_size: 64
     hidden_units: 64
-    time_per_actor: 256
+    time_per_actor: 2048
 
   ddqn:
     gamma: 0.99

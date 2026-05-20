@@ -161,6 +161,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     '''Runs one iteration of the PPO algorithm, which consists of collecting trajectories from multiple actors, estimating advantages and value targets, and updating the actor and critic networks.'''  
     # Collect trajectories from multiple actors (data collection phase)
     total_avg_reward = 0
+   
     states, _ = env_vector.reset()
     steps_in_iteration = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
@@ -172,8 +173,7 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
         total_avg_reward += np.mean(rewards)
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
     loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
-    logger.log_episode_reward(total_avg_reward)
-    logger.log_steps_in_episode(steps_in_iteration)
+    logger.log_episode_reward(total_avg_reward, steps_in_iteration)
     logger.log_loss(loss)
     return total_avg_reward
 
@@ -207,13 +207,13 @@ def run_experiments_PPO(env_name, agent_fn, seeds, n_episodes=100, eval_interval
         env_test = gym.make(env_name) # we will create vectorized envs later, here we just need it to get the state and action space dimensions for the agent initialization
         state_dim = env_test.observation_space.shape[0]
         action_space = env_test.action_space
-
+        
         agent = agent_fn(action_space, state_dim)
         envs  = gym.vector.SyncVectorEnv([
             lambda: gym.make(env_name) for _ in range(agent.n_actors)
         ])
-        logger = Logger()
-
+        logger = Logger(algo_name = "PPO", env_name=env_name)
+        
         try:
             logger = run_experiment_PPO(envs, env_name, agent, logger, n_episodes, eval_interval=eval_interval, seed=seed, create_videos=create_videos, video_interval=video_interval)
         finally:
