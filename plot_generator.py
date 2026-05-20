@@ -91,14 +91,36 @@ SAVE_DIR = os.path.join("results", "plots")
 if not os.path.exists(SAVE_DIR):
     os.makedirs(SAVE_DIR)
 
+<<<<<<< HEAD
 # env_name = "CartPole-v1"
+||||||| parent of b0e5f41 (to date)
+env_name = "CartPole-v1"
+=======
+env_name = "LunarLander-v3"
+>>>>>>> b0e5f41 (to date)
 
 
+<<<<<<< HEAD
 # FILE_NAME = "CartPole_DQN/dqn_CartPole-v1_logs.csv"
 # FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
 # results_df = pd.read_csv(FILE_PATH)
+||||||| parent of b0e5f41 (to date)
+FILE_NAME = "CartPole_DQN/dqn_CartPole-v1_logs.csv"
+FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+results_df = pd.read_csv(FILE_PATH)
+=======
+FILE_NAME = "LunarLander_DDQN/ddqn_LunarLander-v3_logs_nep1000.csv"
+FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+results_df = pd.read_csv(FILE_PATH)
+>>>>>>> b0e5f41 (to date)
 
+<<<<<<< HEAD
 # SAVE_NAME = "CartPole_DQN_learning_curve.png"
+||||||| parent of b0e5f41 (to date)
+SAVE_NAME = "CartPole_DQN_learning_curve.png"
+=======
+SAVE_NAME = "LunarLander_DDQN_learning_curve_1000_episodes.png"
+>>>>>>> b0e5f41 (to date)
 
 
 plot_env_curves(results_df, env_name=env_name, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
