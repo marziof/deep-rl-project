@@ -51,7 +51,7 @@ class PPOAgent:
             action_distribution = Categorical(logits=logits) # create a categorical distribution from the logits
             chosen_actions =  action_distribution.sample() 
             log_probs = action_distribution.log_prob(chosen_actions) # compute the log probability of the chosen actions
-        return chosen_actions.cpu().numpy(), log_probs
+        return chosen_actions.cpu().numpy(), chosen_actions.cpu().numpy(), log_probs
 
     def store(self, t, states, actions, rewards, next_states, log_probs, dones):
         self.states[:, t]       = states
