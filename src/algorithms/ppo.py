@@ -217,7 +217,8 @@ class PPOAgentContinuous:
         next_values = next_values.reshape(self.n_actors, self.time_per_actor)
         next_values[self.dones.astype(bool)] = 0.0
 
-        TD_residuals = (self.rewards + self.gamma * next_values - values)
+        normalized_rewards = self.rewards / (self.rewards.std() + 1e-8)
+        TD_residuals = (normalized_rewards + self.gamma * next_values - values)
         
         #Calculate Advantages
         advantage = np.zeros(self.n_actors)
@@ -269,7 +270,7 @@ class PPOAgentContinuous:
                 critic_loss = nn.MSELoss()(values, batch_value_targets)
 
                 # Backpropagation
-                total_loss = actor_loss + critic_loss - self.entropy_coef * entropy
+                total_loss = actor_loss + 0.5*critic_loss - self.entropy_coef * entropy
                 
                 self.optimizer.zero_grad()
                 total_loss.backward()

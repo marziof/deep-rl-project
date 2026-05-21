@@ -1,22 +1,12 @@
 # General settings of the simulation
-# experiment:
-#   env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
-#   algo: "sac" # Choose from [dqn, ppo, sac, td3, ddqn]
-#   n_episodes: 300
-#   n_iterations: 61 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-#   eval_interval: 10
-#   seeds: [0,42,100]
-#   exp_name: "Pendulum_SAC_alpha_0.9" # Name of the experiment for saving results and logs
-#   create_videos: False
-#   video_interval: 10
 experiment:
-  env_name: "LunarLander-v3" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
+  env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
-  n_episodes: 300
-  n_iterations: 195 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-  eval_interval: 10
-  seeds: [0,42,100]
-  exp_name: "LunarLander_PPO_1024" # Name of the experiment for saving results and logs
+  n_episodes: 700
+  n_iterations: 60 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  eval_interval: 1
+  seeds: [0, 42, 67]
+  exp_name: "Pendulum_PPO_60ksteps_500T2N"
   create_videos: False
   video_interval: 10
 
@@ -25,7 +15,7 @@ algos:
   sac:
     lr: 0.0003
     tau: 0.005
-    alpha: 0.9
+    alpha: 0.2
     batch_size: 256
     buffer_capacity: 200000
     gamma: 0.99
@@ -36,7 +26,7 @@ algos:
 
   td3: 
     gamma: 0.99
-    batch_size: 64
+    batch_size: 256
     lr: 0.0003
     sigma: 0.2
     sigma_tilde: 0.2
@@ -58,14 +48,14 @@ algos:
 
   
   ppo: 
-    lr: 0.0003
+    lr: 0.001
     epsilon_clip: 0.2
     gamma: 0.99
     n_actors: 2
     n_epochs: 5
     batch_size: 64
     hidden_units: 64
-    time_per_actor: 1024
+    time_per_actor: 500
 
   ddqn:
     gamma: 0.99
