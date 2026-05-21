@@ -9,7 +9,7 @@ import seaborn as sns
 # -----------------------
 import os
 
-FONT_SIZE = 23
+FONT_SIZE = 24
 
 def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Curve", save_path=None, exp_name=None):
     """
@@ -56,15 +56,59 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
     plt.close() # Close plot to free up memory
 
 
+def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, title=None, bin_size=100):
 
+    plt.figure(figsize=(12, 8), facecolor='none')
 
-def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size=100):
+    df = df[(df['metric'] == metric) & (df['env'] == env_name)].copy()
+
+    df['step_bin'] = (df['step'] // bin_size) * bin_size
+    df_binned = df.groupby(['algo', 'seed', 'step_bin'])['value'].mean().reset_index()
+    df['eval_idx'] = df.groupby(['algo', 'seed']).cumcount()
+
+    df['aligned_step'] = (
+        df.groupby(['algo', 'eval_idx'])['step']
+        .transform('mean')
+    )
+
+    ax = plt.gca()
+    ax.set_facecolor('none')
+
+    sns.lineplot(data=df, x='aligned_step', y='value', hue='algo', errorbar='sd')
+
+    if title is None:
+        title = f"{env_name} Learning Curves"
+
+    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
+    plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
+    plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
+
+    plt.legend(title="Algorithm", fontsize=FONT_SIZE, title_fontsize=FONT_SIZE-1)
+    plt.xticks(fontsize=FONT_SIZE-6)
+    plt.yticks(fontsize=FONT_SIZE-6)
+
+    plt.grid(True, linestyle='--', alpha=0.6)
+
+    if save_path is not None:
+        plt.savefig(
+            save_path,
+            dpi=300,
+            bbox_inches="tight",
+            transparent=True
+        )
+        print(f"Plot saved to: {save_path}")
+
+    plt.show()
+    plt.close()
+
+def plot_env_curves_old(df, env_name, metric="eval_reward", save_path=None, title=None, bin_size=100):
     """
     Plot learning curves for multiple algorithms and environments from a DataFrame with step binning.
     Args:
     - df (DataFrame): DataFrame containing columns ['algo', 'env', 'seed', 'step', 'metric', 'value'].
     - env_name (str): Name of the environment for which to plot curves.
     - save_path (str): Optional path to save the plot. If None, saves to default location.
+    - title (str): Title for the plot.
     - bin_size (int): Size of step bins for aggregation (default 1000).
     """
     plt.figure(figsize=(12, 8))
@@ -83,75 +127,48 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
     print(df_binned.groupby(['algo', 'step_bin']).size())
     print("Seeds: ", df_binned['seed'].unique())
     sns.lineplot(data=df, x='aligned_step', y='value', hue='algo', errorbar='sd')
-    plt.title(f"{env_name}", fontsize=FONT_SIZE)
+    if title is None:
+        title = f"{env_name} Learning Curves"
+    # title in bold and larger font
+    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
     plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
     plt.legend(title="Algorithm", fontsize=FONT_SIZE, title_fontsize=FONT_SIZE-1)
-    plt.xticks(fontsize=FONT_SIZE-5)
-    plt.yticks(fontsize=FONT_SIZE-5)
+    plt.xticks(fontsize=FONT_SIZE-6)
+    plt.yticks(fontsize=FONT_SIZE-6)
     plt.grid(True, linestyle='--', alpha=0.6)
 
     if save_path is not None:
         plt.savefig(save_path)
         print(f"Plot saved to: {save_path}")
-    #plt.show()
+    plt.show()
     plt.close()
 
 
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def plot_param_comparison(
     df,
     metric="eval_reward",
     param="algo",
+    title=None,
     save_path=None,
 ):
-    """
-    Plot mean ± std learning curves across seeds.
 
-    Assumes:
-    - one metric value logged per episode/evaluation
-    - all seeds have same number of logged episodes
-    - step counts may differ across seeds
+    plt.figure(figsize=(12, 8), facecolor='none')
 
-    Args:
-        df (pd.DataFrame):
-            Must contain columns:
-            ['seed', 'metric', 'value', param]
-
-        metric (str):
-            Metric to plot (e.g. "eval_reward")
-
-        param (str):
-            Column used for comparison/hue
-            (e.g. "algo", "learning_rate")
-
-        save_path (str or None):
-            Optional path to save figure
-    """
-
-    plt.figure(figsize=(12, 8))
-
-    # filter metric
     df_plot = df[df["metric"] == metric].copy()
 
-    # create aligned episode/eval index
     df_plot["episode"] = (
         df_plot
         .groupby([param, "seed"])
         .cumcount()
     )
+
     eval_interval = 10
     df_plot["episode"] = df_plot["episode"] * eval_interval
 
-
-    palette = sns.color_palette(
-        "flare",
-        n_colors=df_plot[param].nunique()
-    )
+    palette = sns.color_palette()
 
     sns.lineplot(
         data=df_plot,
@@ -162,15 +179,23 @@ def plot_param_comparison(
         palette=palette,
     )
 
+    ax = plt.gca()
+    ax.set_facecolor('none')
+
+    algo_name = df_plot['algo'].iloc[0] if 'algo' in df_plot.columns else "Algorithm"
+    algo_name = algo_name.upper() if isinstance(algo_name, str) else "Algorithm"
+
+    if title is None:
+        title = f"{algo_name} comparison"
+    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
     plt.xlabel("Episode", fontsize=FONT_SIZE)
-    plt.ylabel(metric.replace("_", " ").title(), fontsize=FONT_SIZE)
-    plt.xticks(fontsize=FONT_SIZE-2)
-    plt.yticks(fontsize=FONT_SIZE-2)
+    plt.ylabel("Reward", fontsize=FONT_SIZE)
 
     plt.legend(
         title=param,
-        fontsize=FONT_SIZE-1,
+        fontsize=FONT_SIZE-2,
         title_fontsize=FONT_SIZE-1,
+        frameon=False  # important for poster look
     )
 
     plt.grid(True, linestyle="--", alpha=0.6)
@@ -178,7 +203,12 @@ def plot_param_comparison(
     plt.tight_layout()
 
     if save_path is not None:
-        plt.savefig(save_path, bbox_inches="tight")
+        plt.savefig(
+            save_path,
+            dpi=300,
+            bbox_inches="tight",
+            transparent=True
+        )
         print(f"Plot saved to: {save_path}")
 
     plt.show()
