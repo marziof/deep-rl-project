@@ -3,10 +3,10 @@ experiment:
   env_name: "CartPole-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
   n_episodes: 700
-  n_iterations: 60 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  n_iterations: 2 # 781 with 128 for 1000 episodes #235 with 128 for 300  
   eval_interval: 1
   seeds: [0, 42, 67]
-  exp_name: "Cartpole_PPO_60ksteps_500T2N"
+  exp_name: "test_cartpole"
   create_videos: False
   video_interval: 10
 
@@ -22,7 +22,7 @@ algos:
     gradient_steps: 1
     target_update_freq: 500
     learning_starts: 1000
-    update_every: 6
+    update_every: 4
 
   td3: 
     gamma: 0.99

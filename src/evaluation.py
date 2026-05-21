@@ -73,7 +73,11 @@ def evaluate_PPO(env, agent, n_episodes=10, visualize=False, video_title = None,
                 frame = env.render()
                 frames.append(frame)
 
-            action, unclipped_actions, _ = agent.act(state)
+            act_result = agent.act(state)
+            if len(act_result) == 3:
+                action, unclipped_actions, _ = act_result
+            else:
+                action, _ = act_result
             state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             total += reward

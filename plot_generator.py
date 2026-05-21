@@ -16,13 +16,14 @@ if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDou
     raise ValueError("Unsupported environment. Please choose 'Pendulum-v1', 'CartPole-v1', 'LunarLander-v3', or 'InvertedDoublePendulum-v5'.")
 env_name = args.env
 LOAD_DIR = os.path.join("results", "data")
+LOAD_DIR2 = os.path.join("final_results", "data")
 
 results_df = None
 SAVE_NAME = ""
 
 if env_name=="Pendulum-v1":
     SAVE_NAME = "Pendulum_comparison.png"
-    FILE_NAME = "Pendulum_SAC/sac_Pendulum-v1_logs.csv"
+    FILE_NAME = "Pendulum_SAC_2/sac_Pendulum-v1_logs.csv"
     FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
     results_df1 = pd.read_csv(FILE_PATH)
 
@@ -71,15 +72,18 @@ elif env_name=="LunarLander-v3":
 
 elif env_name=="InvertedDoublePendulum-v5":
     SAVE_NAME = "InvertedDoublePendulum_comparison.png"
-    FILE_NAME = "InvertedDoublePendulum_SAC/sac_InvertedDoublePendulum-v5_logs.csv"
+    FILE_NAME = "InvertedDoublePendulum_SAC_2500/sac_InvertedDoublePendulum-v5_logs.csv"
     FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
     results_df1 = pd.read_csv(FILE_PATH)
 
-    FILE_NAME2 = "InvertedDoublePendulum_PPO/ppo_InvertedDoublePendulum-v5_logs.csv"
-    FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
+    FILE_NAME2 = "InvertedDoublePendulum_PPO_250ksteps_500T2N/ppo_InvertedDoublePendulum-v5_logs.csv"
+    FILE_PATH2 = os.path.join(LOAD_DIR2, FILE_NAME2)
     results_df2 = pd.read_csv(FILE_PATH2)
+    # FILE_NAME2 = "InvertedDoublePendulum_PPO/ppo_InvertedDoublePendulum-v5_logs.csv"
+    # FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
+    # results_df2 = pd.read_csv(FILE_PATH2)
 
-    FILE_NAME3 = "InvertedDoublePendulum_TD3/td3_InvertedDoublePendulum-v5_logs.csv"
+    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs_2500.csv"
     FILE_PATH3 = os.path.join(LOAD_DIR, FILE_NAME3)
     results_df3 = pd.read_csv(FILE_PATH3)
 
@@ -91,36 +95,14 @@ SAVE_DIR = os.path.join("results", "plots")
 if not os.path.exists(SAVE_DIR):
     os.makedirs(SAVE_DIR)
 
-<<<<<<< HEAD
 # env_name = "CartPole-v1"
-||||||| parent of b0e5f41 (to date)
-env_name = "CartPole-v1"
-=======
-env_name = "LunarLander-v3"
->>>>>>> b0e5f41 (to date)
 
 
-<<<<<<< HEAD
 # FILE_NAME = "CartPole_DQN/dqn_CartPole-v1_logs.csv"
 # FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
 # results_df = pd.read_csv(FILE_PATH)
-||||||| parent of b0e5f41 (to date)
-FILE_NAME = "CartPole_DQN/dqn_CartPole-v1_logs.csv"
-FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
-results_df = pd.read_csv(FILE_PATH)
-=======
-FILE_NAME = "LunarLander_DDQN/ddqn_LunarLander-v3_logs_nep1000.csv"
-FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
-results_df = pd.read_csv(FILE_PATH)
->>>>>>> b0e5f41 (to date)
 
-<<<<<<< HEAD
 # SAVE_NAME = "CartPole_DQN_learning_curve.png"
-||||||| parent of b0e5f41 (to date)
-SAVE_NAME = "CartPole_DQN_learning_curve.png"
-=======
-SAVE_NAME = "LunarLander_DDQN_learning_curve_1000_episodes.png"
->>>>>>> b0e5f41 (to date)
 
 
 plot_env_curves(results_df, env_name=env_name, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
