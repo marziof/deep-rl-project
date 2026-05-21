@@ -23,7 +23,7 @@ SAVE_NAME = ""
 
 if env_name=="Pendulum-v1":
     SAVE_NAME = "Pendulum_comparison.png"
-    FILE_NAME = "Pendulum_SAC/sac_Pendulum-v1_logs.csv"
+    FILE_NAME = "Pendulum_SAC_2/sac_Pendulum-v1_logs.csv"
     FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
     results_df1 = pd.read_csv(FILE_PATH)
 
@@ -83,7 +83,7 @@ elif env_name=="InvertedDoublePendulum-v5":
     # FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
     # results_df2 = pd.read_csv(FILE_PATH2)
 
-    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs.csv"
+    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs_2500.csv"
     FILE_PATH3 = os.path.join(LOAD_DIR, FILE_NAME3)
     results_df3 = pd.read_csv(FILE_PATH3)
 
