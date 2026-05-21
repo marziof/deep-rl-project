@@ -111,13 +111,10 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
     n_steps = agent.time_per_actor * len(env_vector.envs)
     for t in range(agent.time_per_actor):
         act_result = agent.act(states)
-        if len(act_result) == 3:
-            actions, unclipped_actions, log_probs = act_result
-        else:
-            actions, log_probs = act_result
+        actions, unclipped_actions, log_probs = act_result
         next_states, rewards, terms, truncs, _ = env_vector.step(actions)
         #  Compute TDs
-        agent.store(t, states, actions, rewards, next_states, log_probs, terms | truncs)
+        agent.store(t, states, unclipped_actions, rewards, next_states, log_probs, terms | truncs)
         states = next_states
         total_avg_reward += np.mean(rewards)
     agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
