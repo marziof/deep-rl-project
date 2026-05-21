@@ -9,7 +9,7 @@ import seaborn as sns
 # -----------------------
 import os
 
-FONT_SIZE = 20
+FONT_SIZE = 23
 
 def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Curve", save_path=None, exp_name=None):
     """
@@ -87,8 +87,8 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, bin_size
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
     plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
     plt.legend(title="Algorithm", fontsize=FONT_SIZE, title_fontsize=FONT_SIZE-1)
-    plt.xticks(fontsize=FONT_SIZE-6)
-    plt.yticks(fontsize=FONT_SIZE-6)
+    plt.xticks(fontsize=FONT_SIZE-5)
+    plt.yticks(fontsize=FONT_SIZE-5)
     plt.grid(True, linestyle='--', alpha=0.6)
 
     if save_path is not None:
@@ -162,14 +162,15 @@ def plot_param_comparison(
         palette=palette,
     )
 
-    plt.title(f"{param} comparison", fontsize=18)
-    plt.xlabel("Episode", fontsize=16)
-    plt.ylabel(metric.replace("_", " ").title(), fontsize=16)
+    plt.xlabel("Episode", fontsize=FONT_SIZE)
+    plt.ylabel(metric.replace("_", " ").title(), fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE-2)
+    plt.yticks(fontsize=FONT_SIZE-2)
 
     plt.legend(
         title=param,
-        fontsize=12,
-        title_fontsize=13,
+        fontsize=FONT_SIZE-1,
+        title_fontsize=FONT_SIZE-1,
     )
 
     plt.grid(True, linestyle="--", alpha=0.6)

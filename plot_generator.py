@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from src.utils.plotting import plot_learning_curve, plot_env_curves
+from src.utils.plotting import plot_learning_curve, plot_env_curves, plot_param_comparison
 import argparse
 
 #We parse the environment name to get the corresponding logs for each algorithm, then we plot the learning curves for all algorithms on the same plot for comparison. We will do this for both environments.
@@ -12,7 +12,7 @@ parser.add_argument(
     help="Name of the environment to plot (e.g., 'Pendulum-v1' or 'CartPole-v1')"
 )
 args = parser.parse_args()
-if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5"]:
+if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Alpha", "Sigma"]:
     raise ValueError("Unsupported environment. Please choose 'Pendulum-v1', 'CartPole-v1', 'LunarLander-v3', or 'InvertedDoublePendulum-v5'.")
 env_name = args.env
 LOAD_DIR = os.path.join("results", "data")
@@ -37,7 +37,35 @@ if env_name=="Pendulum-v1":
 
     results_df = pd.concat([results_df1, results_df2, results_df3], ignore_index=True)
 
+elif env_name=="Alpha":
+    SAVE_NAME = "Alpha_comparison.png"
+    for alpha in [0.05, 0.1, 0.2, 0.5, 0.9]:
+        FILE_NAME = f"Pendulum_SAC_alpha_{alpha}/sac_Pendulum-v1_logs.csv"
+        FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+        results_df_alpha = pd.read_csv(FILE_PATH)
+        
+        # --- ADD THIS LINE ---
+        results_df_alpha["Alpha"] = alpha 
+        
+        if results_df is None:
+            results_df = results_df_alpha
+        else:
+            results_df = pd.concat([results_df, results_df_alpha], ignore_index=True)
 
+elif env_name=="Sigma":
+    SAVE_NAME = "Sigma_comparison.png"
+    for sigma in [0.05, 0.1, 0.2, 0.3]:
+        FILE_NAME = f"Pendulum_TD3_sigma_{sigma}/td3_Pendulum-v1_logs.csv"
+        FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+        results_df_sigma = pd.read_csv(FILE_PATH)
+        
+        # --- ADD THIS LINE ---
+        results_df_sigma["Sigma"] = sigma
+        
+        if results_df is None:
+            results_df = results_df_sigma
+        else:
+            results_df = pd.concat([results_df, results_df_sigma], ignore_index=True)
 elif env_name=="CartPole-v1":
     SAVE_NAME = "CartPole_comparison.png"
     FILE_NAME = "CartPole_DDQN/ddqn_CartPole-v1_logs.csv"
@@ -76,14 +104,14 @@ elif env_name=="InvertedDoublePendulum-v5":
     FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
     results_df1 = pd.read_csv(FILE_PATH)
 
-    FILE_NAME2 = "InvertedDoublePendulum_PPO_250ksteps_500T2N/ppo_InvertedDoublePendulum-v5_logs.csv"
-    FILE_PATH2 = os.path.join(LOAD_DIR2, FILE_NAME2)
-    results_df2 = pd.read_csv(FILE_PATH2)
-    # FILE_NAME2 = "InvertedDoublePendulum_PPO/ppo_InvertedDoublePendulum-v5_logs.csv"
-    # FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
+    # FILE_NAME2 = "InvertedDoublePendulum_PPO_250ksteps_500T2N/ppo_InvertedDoublePendulum-v5_logs.csv"
+    # FILE_PATH2 = os.path.join(LOAD_DIR2, FILE_NAME2)
     # results_df2 = pd.read_csv(FILE_PATH2)
+    FILE_NAME2 = "InvertedDoublePendulum_PPO/ppo_InvertedDoublePendulum-v5_logs.csv"
+    FILE_PATH2 = os.path.join(LOAD_DIR, FILE_NAME2)
+    results_df2 = pd.read_csv(FILE_PATH2)
 
-    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs_2500.csv"
+    FILE_NAME3 = "InvertedDoublePendulum_TD3_2500/td3_InvertedDoublePendulum-v5_logs_2500_2.csv"
     FILE_PATH3 = os.path.join(LOAD_DIR, FILE_NAME3)
     results_df3 = pd.read_csv(FILE_PATH3)
 
@@ -104,5 +132,9 @@ if not os.path.exists(SAVE_DIR):
 
 # SAVE_NAME = "CartPole_DQN_learning_curve.png"
 
+if env_name in ["Alpha", "Sigma"]:
+    param = "Alpha" if env_name=="Alpha" else "Sigma"
+    plot_param_comparison(results_df, param=param, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME))
 
-plot_env_curves(results_df, env_name=env_name, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
+else:
+    plot_env_curves(results_df, env_name=env_name, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME), bin_size=5)
