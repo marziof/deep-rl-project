@@ -3,10 +3,10 @@ experiment:
   env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
   algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
   n_episodes: 700
-  n_iterations: 500 # 781 with 128 for 1000 episodes #235 with 128 for 300  
-  eval_interval: 10
-  seeds: [0]
-  exp_name: "Pendulum_PPO_500ksteps_test_500T2N"
+  n_iterations: 60 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  eval_interval: 1
+  seeds: [0, 42, 67]
+  exp_name: "Pendulum_PPO_60ksteps_500T2N"
   create_videos: False
   video_interval: 10
 
@@ -48,7 +48,7 @@ algos:
 
   
   ppo: 
-    lr: 0.0003
+    lr: 0.001
     epsilon_clip: 0.2
     gamma: 0.99
     n_actors: 2
