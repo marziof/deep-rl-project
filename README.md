@@ -159,3 +159,31 @@ Algorithm-specific hyperparameters are configured under `algos.<algorithm_name>`
 ## Logging
 - Training metrics logged to stdout
 
+## Generating plots
+The framework contains a plot generator, called `plot_generator.py`, which aggregates training logs across different algorithms and hyperparameters to generate comparative figures. The `plot_generator.py` script is explicitly tailored to look for the specific experimental directories and log filenames structured within our project directory (`results/data/`). If you alter the default file naming or folder structure layout, you may need to update the file path variables directly in the script.
+
+# Compare algorithms on Pendulum-v1
+```bash
+python plot_generator.py --env Pendulum-v1
+```
+
+# Compare algorithms on InvertedDoublePendulum-v5
+```bash
+python plot_generator.py --env InvertedDoublePendulum-v1
+```
+
+To plot results from a hyperparameter tuning sweep (such as comparing variations of the temperature parameter $\alpha$ in SAC or exploration noise $\sigma$ in TD3), specify the respective parameter keyword as the target value:
+
+# Compare algorithms on Pendulum-v1
+```bash
+python plot_generator.py --env Alpha
+```
+
+# Compare algorithms on InvertedDoublePendulum-v5
+```bash
+python plot_generator.py --env Sigma
+```
+Notice that to test other hyperparameters on other environments, you must customize the paths and plot_generator.py to be compatible with the desired hyperparameter.
+
+
+
