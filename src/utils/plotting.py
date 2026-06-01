@@ -58,7 +58,7 @@ def plot_learning_curve(episodes, mean_rewards, std_rewards, title="Learning Cur
 
 def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, title=None, bin_size=100):
 
-    plt.figure(figsize=(12, 8), facecolor='none')
+    plt.figure(figsize=(12, 8), facecolor='white')
 
     df = df[(df['metric'] == metric) & (df['env'] == env_name)].copy()
 
@@ -79,7 +79,7 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, title=No
     if title is None:
         title = f"{env_name} Learning Curves"
 
-    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
+    #plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
     plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
 
@@ -93,8 +93,7 @@ def plot_env_curves(df, env_name, metric="eval_reward", save_path=None, title=No
         plt.savefig(
             save_path,
             dpi=300,
-            bbox_inches="tight",
-            transparent=True
+            bbox_inches="tight"
         )
         print(f"Plot saved to: {save_path}")
 
@@ -130,7 +129,7 @@ def plot_env_curves_old(df, env_name, metric="eval_reward", save_path=None, titl
     if title is None:
         title = f"{env_name} Learning Curves"
     # title in bold and larger font
-    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
+    #plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
     plt.xlabel("Environment Steps", fontsize=FONT_SIZE)
     plt.ylabel("Mean Reward", fontsize=FONT_SIZE)
     plt.legend(title="Algorithm", fontsize=FONT_SIZE, title_fontsize=FONT_SIZE-1)
@@ -155,7 +154,7 @@ def plot_param_comparison(
     save_path=None,
 ):
 
-    plt.figure(figsize=(12, 8), facecolor='none')
+    plt.figure(figsize=(12, 8)) #, facecolor='none')
 
     df_plot = df[df["metric"] == metric].copy()
 
@@ -168,7 +167,8 @@ def plot_param_comparison(
     eval_interval = 10
     df_plot["episode"] = df_plot["episode"] * eval_interval
 
-    palette = sns.color_palette()
+    palette = sns.color_palette("flare", as_cmap=True)
+    #sns.color_palette()
 
     sns.lineplot(
         data=df_plot,
@@ -187,9 +187,11 @@ def plot_param_comparison(
 
     if title is None:
         title = f"{algo_name} comparison"
-    plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
+    #plt.title(title, fontsize=FONT_SIZE + 2, fontweight='bold')
     plt.xlabel("Episode", fontsize=FONT_SIZE)
     plt.ylabel("Reward", fontsize=FONT_SIZE)
+    plt.xticks(fontsize=FONT_SIZE-8)
+    plt.yticks(fontsize=FONT_SIZE-8)
 
     plt.legend(
         title=param,
@@ -206,8 +208,8 @@ def plot_param_comparison(
         plt.savefig(
             save_path,
             dpi=300,
-            bbox_inches="tight",
-            transparent=True
+            bbox_inches="tight"
+            #transparent=True
         )
         print(f"Plot saved to: {save_path}")
 
