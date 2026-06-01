@@ -1,0 +1,70 @@
+# General settings of the simulation
+experiment:
+  env_name: "LunarLander-v3" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
+  algo: "ppo" # Choose from [dqn, ppo, sac, td3, ddqn]
+  n_episodes: 1000
+  n_iterations: 781 #235
+  eval_interval: 10
+  seeds: [0,1,2,42,67,69]
+  exp_name: "LunarLander_PPO"
+  create_videos: False
+  video_interval: 10
+
+# Algorithm-specific hyperparameters 
+algos:  
+  sac:
+    lr: 0.003
+    tau: 0.005
+    alpha: 0.2
+    batch_size: 256
+    buffer_capacity: 20000
+    gamma: 0.99
+    gradient_steps: 1
+    target_update_freq: 500
+
+  td3: 
+    gamma: 0.99
+    batch_size: 256
+    lr: 0.0003
+    sigma: 0.2
+    sigma_tilde: 0.2
+    c: 0.5
+    tau: 0.005
+    policy_delay: 2
+    buffer_capacity: 60000
+
+  dqn: 
+    gamma: 0.99
+    lr: 0.001
+    buffer_capacity: 20000
+    eps: 1.0
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
+    batch_size: 64
+    hidden_units: 64
+
+  
+  ppo: 
+    lr: 0.001
+    epsilon_clip: 0.2
+    gamma: 0.99
+    n_actors: 2
+    n_epochs: 5
+    batch_size: 64
+    hidden_units: 64
+    time_per_actor: 128
+
+  ddqn:
+    gamma: 0.99
+    lr: 0.001
+    buffer_capacity: 20000
+    eps: 1.0
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
+    batch_size: 64
+    hidden_units: 256
+
+  
+

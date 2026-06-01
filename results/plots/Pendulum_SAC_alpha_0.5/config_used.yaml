@@ -1,0 +1,72 @@
+# General settings of the simulation
+experiment:
+  env_name: "Pendulum-v1" #Cartpole Choose from [CartPole-v1, Pendulum-v1, InvertedDoublePendulum-v5, LunarLander-v3]
+  algo: "sac" # Choose from [dqn, ppo, sac, td3, ddqn]
+  n_episodes: 300
+  n_iterations: 148 # 781 with 128 for 1000 episodes #235 with 128 for 300  
+  eval_interval: 10
+  seeds: [0,42,100]
+  exp_name: "Pendulum_SAC_alpha_0.5"
+  create_videos: False
+  video_interval: 10
+
+# Algorithm-specific hyperparameters 
+algos:  
+  sac:
+    lr: 0.0003
+    tau: 0.005
+    alpha: 0.5
+    batch_size: 256
+    buffer_capacity: 200000
+    gamma: 0.99
+    gradient_steps: 1
+    target_update_freq: 500
+    learning_starts: 500
+    update_every: 2
+
+  td3: 
+    gamma: 0.99
+    batch_size: 256
+    lr: 0.0003
+    sigma: 0.2
+    sigma_tilde: 0.2
+    c: 0.5
+    tau: 0.005
+    policy_delay: 2
+    buffer_capacity: 20000
+
+  dqn: 
+    gamma: 0.99
+    lr: 0.001
+    buffer_capacity: 20000
+    eps: 1.0
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
+    batch_size: 64
+    hidden_units: 64
+
+  
+  ppo: 
+    lr: 0.001
+    epsilon_clip: 0.2
+    gamma: 0.99
+    n_actors: 2
+    n_epochs: 5
+    batch_size: 64
+    hidden_units: 64
+    time_per_actor: 1024
+
+  ddqn:
+    gamma: 0.99
+    lr: 0.001
+    buffer_capacity: 20000
+    eps: 1.0
+    eps_min: 0.05
+    eps_decay: 0.999
+    target_update_freq: 500
+    batch_size: 64
+    hidden_units: 256
+
+  
+
