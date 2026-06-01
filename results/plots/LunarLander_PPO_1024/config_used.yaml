@@ -58,7 +58,7 @@ algos:
 
   
   ppo: 
-    lr: 0.001
+    lr: 0.0003
     epsilon_clip: 0.2
     gamma: 0.99
     n_actors: 2

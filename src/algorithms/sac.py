@@ -127,7 +127,7 @@ class SACAgent:
 
     def soft_update_target(self):
         # This is the EMA update for the Target Value Network (Psi-bar)
-        # We do NOT use an optimizer here.
+        # We don't use an optimizer here.
         with torch.no_grad():
             # Loop through both networks' parameters simultaneously
             for target_param, param in zip(self.v_target_net.parameters(), self.v_net.parameters()):

@@ -12,7 +12,7 @@ parser.add_argument(
     help="Name of the environment to plot (e.g., 'Pendulum-v1' or 'CartPole-v1')"
 )
 args = parser.parse_args()
-if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Alpha", "Sigma"]:
+if args.env not in ["Pendulum-v1", "CartPole-v1", "LunarLander-v3", "InvertedDoublePendulum-v5", "Alpha", "Sigma", "Batchsize", "Tau", "Update_freq"]:
     raise ValueError("Unsupported environment. Please choose 'Pendulum-v1', 'CartPole-v1', 'LunarLander-v3', or 'InvertedDoublePendulum-v5'.")
 env_name = args.env
 LOAD_DIR = os.path.join("results", "data")
@@ -37,6 +37,47 @@ if env_name=="Pendulum-v1":
 
     results_df = pd.concat([results_df1, results_df2, results_df3], ignore_index=True)
 
+elif env_name=="Batchsize":
+    SAVE_NAME = "Batchsize_comparison.png"
+    for batch_size in [64, 128, 256, 512]:
+        FILE_NAME = f"Pendulum_SAC_batchsize_{batch_size}/sac_Pendulum-v1_logs_nep300_eps09999.csv"
+        FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+        results_df_batchsize = pd.read_csv(FILE_PATH)
+        
+        results_df_batchsize["Batch Size"] = batch_size 
+        
+        if results_df is None:
+            results_df = results_df_batchsize
+        else:
+            results_df = pd.concat([results_df, results_df_batchsize], ignore_index=True)
+elif env_name=="Tau":
+    SAVE_NAME = "Tau_comparison.png"
+    for tau in [0.001, 0.005, 0.01, 0.05]:
+        FILE_NAME = f"Pendulum_SAC_tau_{tau}/sac_Pendulum-v1_logs_nep300_eps09999.csv"
+        FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+        results_df_tau = pd.read_csv(FILE_PATH)
+        
+        results_df_tau["Tau"] = tau 
+        
+        if results_df is None:
+            results_df = results_df_tau
+        else:
+            results_df = pd.concat([results_df, results_df_tau], ignore_index=True)
+
+elif env_name=="Update_freq":
+    SAVE_NAME = "Update_freq_comparison.png"
+    for update_freq in [1, 4, 8, 16]:
+        FILE_NAME = f"Pendulum_SAC_u_{update_freq}/sac_Pendulum-v1_logs_nep300_eps09999.csv"
+        FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
+        results_df_update_freq = pd.read_csv(FILE_PATH)
+        
+        results_df_update_freq["Update Frequency"] = update_freq 
+        
+        if results_df is None:
+            results_df = results_df_update_freq
+        else:
+            results_df = pd.concat([results_df, results_df_update_freq], ignore_index=True)
+
 elif env_name=="Alpha":
     SAVE_NAME = "Alpha_comparison.png"
     for alpha in [0.05, 0.1, 0.2, 0.5, 0.9]:
@@ -44,7 +85,6 @@ elif env_name=="Alpha":
         FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
         results_df_alpha = pd.read_csv(FILE_PATH)
         
-        # --- ADD THIS LINE ---
         results_df_alpha["Alpha"] = alpha 
         
         if results_df is None:
@@ -59,7 +99,6 @@ elif env_name=="Sigma":
         FILE_PATH = os.path.join(LOAD_DIR, FILE_NAME)
         results_df_sigma = pd.read_csv(FILE_PATH)
         
-        # --- ADD THIS LINE ---
         results_df_sigma["Sigma"] = sigma
         
         if results_df is None:
@@ -132,7 +171,7 @@ if not os.path.exists(SAVE_DIR):
 
 # SAVE_NAME = "CartPole_DQN_learning_curve.png"
 
-if env_name in ["Alpha", "Sigma"]:
+if env_name in ["Alpha", "Sigma", "Batchsize", "Tau", "Update_freq"]:
     param = "Alpha" if env_name=="Alpha" else "Sigma"
     plot_param_comparison(results_df, param=param, metric="eval_reward", save_path=os.path.join(SAVE_DIR, SAVE_NAME))
 

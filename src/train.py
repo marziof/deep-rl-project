@@ -117,8 +117,8 @@ def run_PPO_iteration(env_vector, agent, logger): #Equivalent of "episode" for P
         agent.store(t, states, unclipped_actions, rewards, next_states, log_probs, terms | truncs)
         states = next_states
         total_avg_reward += np.mean(rewards)
-    agent.calculate_advantages() #PHASE 1: Estimate advantages and value targets for the collected trajectories using GAE
-    loss = agent.update() #PHASE 2: Update the actor and critic networks using the collected trajectories and advantage estimations
+    agent.calculate_advantages() #phase 1: Estimate advantages and value targets for the collected trajectories using GAE
+    loss = agent.update() #phas  2: Update the actor and critic networks using the collected trajectories and advantage estimations
     logger.log_episode_reward(total_avg_reward, n_steps)
     logger.log_loss(loss)
     return total_avg_reward
