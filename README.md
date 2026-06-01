@@ -38,7 +38,7 @@ source rl_env/bin/activate  # On Windows: rl_env\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 ```
-
+Some of us ran into some issues when installing the dependencies. We do not guarantee that our requirements will work perfectly. 
 ## Quick Start
 
 ### 1. Configure an experiment
