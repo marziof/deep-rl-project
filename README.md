@@ -160,7 +160,7 @@ Algorithm-specific hyperparameters are configured under `algos.<algorithm_name>`
 - Training metrics logged to stdout
 
 ## Generating plots
-The framework contains a plot generator, called `plot_generator.py`, which aggregates training logs across different algorithms and hyperparameters to generate comparative figures. The `plot_generator.py` script is explicitly tailored to look for the specific experimental directories and log filenames structured within our project directory (`results/data/`). If you alter the default file naming or folder structure layout, you may need to update the file path variables directly in the script.
+The framework contains a plot generator, called `plot_generator.py`, which aggregates training logs across different algorithms and hyperparameters to generate comparative figures. The `plot_generator.py` script is explicitly tailored to look for the specific experimental directories and log filenames structured within our project directory (`results/data/`). If you alter the default file naming or folder structure layout, you may need to update the file path variables directly in the script. Currently, it is possible to reproduce all the plots for hyperparameter tuning in case of SAC, amd the comparison of algos with different environments. 
 
 # Compare algorithms on Pendulum-v1
 ```bash
