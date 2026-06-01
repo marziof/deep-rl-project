@@ -125,7 +125,7 @@ def main():
     plot_learning_curve(np.arange(len(mean_r)), mean_r, std_r, 
     title=f"{env_type.capitalize()} Training ({algo_name.upper()})", exp_name=exp_name)
 
-    # Evaluation Rewards
+    # Evaluation rewards
     eval_rewards = [logger.eval_rewards for logger in all_logs]
     mean_eval, std_eval = compute_stats(eval_rewards)
     plot_learning_curve(np.arange(len(mean_eval)) * config['experiment']['eval_interval'], 

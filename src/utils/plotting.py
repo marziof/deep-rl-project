@@ -195,7 +195,7 @@ def plot_param_comparison(
         title=param,
         fontsize=FONT_SIZE-2,
         title_fontsize=FONT_SIZE-1,
-        frameon=False  # important for poster look
+        frameon=False  # Important for poster look
     )
 
     plt.grid(True, linestyle="--", alpha=0.6)
