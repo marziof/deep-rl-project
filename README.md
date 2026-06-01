@@ -1,24 +1,24 @@
 # Deep Reinforcement Learning Algorithms Framework
 
-A comprehensive Python framework for implementing and testing state-of-the-art deep reinforcement learning algorithms on OpenAI Gymnasium environments.
+A  Python framework for implementing and testing t deep reinforcement learning algorithms on OpenAI Gymnasium environments.
 
 ## 📋 Overview
 
-This project provides modular implementations of popular RL algorithms including **DQN**, **DDQN**, **PPO**, **SAC**, and **TD3**. It features a flexible configuration system, automated experiment tracking, and comprehensive evaluation tools.
+This project provides  implementations of several RL algorithms including DQN, DDQN, PPO, SAC, and TD3. It features a flexible configuration system, automated experiment tracking, and comprehensive evaluation tools.
 
 **Repository:** [marziof/deep-rl-project](https://github.com/marziof/deep-rl-project)
 
-## 🎯 Supported Algorithms & Environments
+## Supported Algorithms & Environments
 
 | Algorithm | Environments |
 |-----------|--------------|
-| **DQN** | CartPole-v1 |
-| **DDQN** | CartPole-v1 |
+| **DQN** | CartPole-v1, LunarLander-v3|
+| **DDQN** | CartPole-v1, LunarLander-v3 |
 | **PPO** | LunarLander-v3, Pendulum-v1, CartPole-v1 |
-| **SAC** | Pendulum-v1, LunarLander-v3 |
-| **TD3** | Pendulum-v1 |
+| **SAC** | Pendulum-v1, InvertedDoublePendulum-v5|
+| **TD3** | Pendulum-v1, InvertedDoublePendulum-v5|
 
-## 📦 Installation
+##  Installation
 
 ### Prerequisites
 - Python 3.8+
@@ -39,9 +39,9 @@ source rl_env/bin/activate  # On Windows: rl_env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Configure Your Experiment
+### 1. Configure an experiment
 
 Edit or create a configuration file in `configs/`:
 
@@ -66,7 +66,7 @@ algos:
     gamma: 0.99
 ```
 
-### 2. Run an Experiment
+### 2. Run an experiment
 
 ```bash
 python experiment_runner.py --config configs/conf.yaml
@@ -78,7 +78,7 @@ Results are saved to `exp_name/` directory containing:
 - Performance plots
 - Optional videos (if enabled)
 
-## 📁 Project Structure
+##Project structure
 
 ```
 ├── src/                          # Core framework
@@ -109,9 +109,9 @@ Results are saved to `exp_name/` directory containing:
 └── requirements.txt              # Dependencies
 ```
 
-## 🔧 How It Works
+## How it works
 
-### Training Pipeline
+### Training pipeline
 
 1. **experiment_runner.py** - Main entry point
    - Reads configuration file
@@ -127,7 +127,7 @@ Results are saved to `exp_name/` directory containing:
    - `run_episode()` - Handles training loops specific to each algorithm
    - Network updates and policy learning
 
-## 📊 Example Usage
+## Example usage
 
 ```bash
 # Run with default config
@@ -139,21 +139,7 @@ python experiment_runner.py --config configs/my_config.yaml
 
 Results are automatically saved with timestamped folders if `exp_name` is not specified (format: `YYYY-MM-DD-HH-MM`).
 
-## 🎓 Notebooks
-
-- **DQN_exploration.ipynb** - DQN algorithm walkthrough
-- **Env_comparison.ipynb** - Environment behavior analysis
-- **exploration.ipynb** - General exploration and debugging
-
-## 🧪 Testing
-
-Run individual algorithm tests:
-```bash
-python test_dqn.py
-python test_td3.ipynb  # Jupyter notebook tests
-```
-
-## 📝 Configuration Guide
+## Configuration guide
 
 Key parameters for `configs/conf.yaml`:
 
@@ -170,19 +156,6 @@ Key parameters for `configs/conf.yaml`:
 
 Algorithm-specific hyperparameters are configured under `algos.<algorithm_name>` in the config file.
 
-## 📈 Monitoring Progress
-
-- TensorBoard integration for real-time monitoring
-- Automatic performance plotting
+## Logging
 - Training metrics logged to stdout
 
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Add new algorithms
-- Support additional environments
-- Improve performance or documentation
-
-## 📄 License
-
-This project is part of a Master's program in Deep Reinforcement Learning.
